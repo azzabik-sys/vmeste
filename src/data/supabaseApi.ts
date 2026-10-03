@@ -235,12 +235,20 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
         if (listeners.size === 0) unwatch()
       }
     },
-    async signIn(email) {
-      const { error } = await supabase.auth.signInWithOtp({
+    async signIn(email, password) {
+      const { error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
-        options: { emailRedirectTo: new URL(import.meta.env.BASE_URL, window.location.origin).href },
+        password,
       })
       fail(error)
+    },
+    async signUp(email, password) {
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+      })
+      fail(error)
+      if (!data.session) throw new Error('Вход не открылся. Нажмите «Войти» с этой же почтой и паролем.')
     },
     async signOut() {
       const { error } = await supabase.auth.signOut()

@@ -325,6 +325,13 @@ h1, h2, p { margin: 0; }
   background: linear-gradient(to top, #faf9f6 72%, rgb(250 249 246 / 0));
 }
 
+.onboard-actions .quiet-link {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  text-align: center;
+}
+
 .join-box { margin-top: 8px; }
 
 .alloc { margin: 4px 0 8px; }

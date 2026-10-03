@@ -25,12 +25,12 @@ export function ErrorScreen({ message, onRetry }: { message: string; onRetry: ()
 }
 
 export function GateScreen() {
-  const { error, signIn } = useBudget()
+  const { error, signIn, signUp } = useBudget()
   const { t } = useI18n()
   const [email, setEmail] = useState('')
-  const [sentTo, setSentTo] = useState<string | null>(null)
+  const [password, setPassword] = useState('')
   const [pending, setPending] = useState(false)
-  const valid = /^\S+@\S+\.\S+$/.test(email.trim())
+  const valid = /^\S+@\S+\.\S+$/.test(email.trim()) && password.length >= 6
 
   return (
     <main className="shell onboard">
@@ -47,10 +47,7 @@ export function GateScreen() {
             event.preventDefault()
             if (!valid) return
             setPending(true)
-            void signIn(email.trim()).then((ok) => {
-              setPending(false)
-              if (ok) setSentTo(email.trim())
-            })
+            void signIn(email.trim(), password).finally(() => setPending(false))
           }}
         >
           <label className="field">
@@ -58,17 +55,38 @@ export function GateScreen() {
             <input
               type="email"
               inputMode="email"
-              autoComplete="email"
+              autoComplete="username"
               value={email}
               placeholder={t('emailPlaceholder')}
               onChange={(event) => setEmail(event.target.value)}
             />
           </label>
+          <label className="field">
+            <span>{t('password')}</span>
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              aria-label={t('password')}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+          </label>
+          <p className="help">{t('passwordHint')}</p>
           <button className="btn-primary" type="submit" disabled={pending || !valid}>
-            {t('sendLink')}
+            {t('signIn')}
+          </button>
+          <button
+            className="btn-secondary"
+            type="button"
+            disabled={pending || !valid}
+            onClick={() => {
+              setPending(true)
+              void signUp(email.trim(), password).finally(() => setPending(false))
+            }}
+          >
+            {t('createLogin')}
           </button>
         </form>
-        {sentTo ? <p className="help">{t('mailSent', { email: sentTo })}</p> : null}
       </div>
     </main>
   )

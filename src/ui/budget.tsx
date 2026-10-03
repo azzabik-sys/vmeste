@@ -16,7 +16,8 @@ type BudgetContextValue = {
   snap: Snapshot
   error: string | null
   refresh: () => Promise<void>
-  signIn: (email: string) => Promise<boolean>
+  signIn: (email: string, password: string) => Promise<boolean>
+  signUp: (email: string, password: string) => Promise<boolean>
   signOut: () => Promise<boolean>
   createHousehold: (input: CreateHouseholdInput) => Promise<boolean>
   joinHousehold: (code: string, displayName: string) => Promise<boolean>
@@ -125,7 +126,8 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     snap,
     error,
     refresh,
-    signIn: (email) => run(() => apiRef.current!.signIn(email)),
+    signIn: (email, password) => run(() => apiRef.current!.signIn(email, password)),
+    signUp: (email, password) => run(() => apiRef.current!.signUp(email, password)),
     signOut: () => run(() => apiRef.current!.signOut()),
     createHousehold: (input) => run(() => apiRef.current!.createHousehold(input)),
     joinHousehold: (code, displayName) => run(() => apiRef.current!.joinHousehold(code, displayName)),

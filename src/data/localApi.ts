@@ -119,6 +119,9 @@ export function createLocalApi(): BudgetApi {
     async signIn() {
       throw new Error('Общий вход включается после подключения Supabase.')
     },
+    async signUp() {
+      throw new Error('Общий вход включается после подключения Supabase.')
+    },
     async signOut() {},
     async createHousehold(input) {
       if (read()) throw new Error('Бюджет на этом телефоне уже есть.')

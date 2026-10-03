@@ -65,6 +65,9 @@ export function createSharedApi(): BudgetApi {
     async signIn() {
       throw new Error('Общий вход включается после подключения Supabase.')
     },
+    async signUp() {
+      throw new Error('Общий вход включается после подключения Supabase.')
+    },
     async signOut() {},
     async createHousehold(input) {
       const who = readWho()

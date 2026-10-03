@@ -56,6 +56,9 @@ export function Onboarding() {
   const [personName, setPersonName] = useState('')
   const [code, setCode] = useState(snap.status === 'needs_household' ? (snap.pendingCode ?? '') : '')
   const [displayName, setDisplayName] = useState('')
+  const [wantJoin, setWantJoin] = useState(
+    snap.status === 'needs_household' && (snap.mode !== 'remote' || Boolean(snap.pendingCode)),
+  )
 
   const monthlyBudget = parsePlan(budgetText) ?? 0
   const allocated = sumRub(drafts.map((draft) => draft.plannedAmount))
@@ -102,7 +105,7 @@ export function Onboarding() {
     setPending(false)
   }
 
-  if (snap.status === 'needs_household') {
+  if (snap.status === 'needs_household' && wantJoin) {
     const canJoin = displayName.trim().length > 0 && (snap.mode !== 'remote' || code.trim().length >= 4)
     return (
       <main className="shell onboard">
@@ -149,6 +152,11 @@ export function Onboarding() {
           <button className="btn-primary" type="button" disabled={pending || !canJoin} onClick={() => void join()}>
             {t('joinBudget')}
           </button>
+          {snap.mode === 'remote' ? (
+            <button className="quiet-link" type="button" onClick={() => setWantJoin(false)}>
+              {t('createBudget')}
+            </button>
+          ) : null}
         </div>
       </main>
     )
@@ -332,9 +340,16 @@ export function Onboarding() {
 
       <div className="onboard-actions">
         {step === 1 ? (
-          <button className="btn-primary" type="button" disabled={!canContinue} onClick={() => setStep(2)}>
-            {t('next')}
-          </button>
+          <>
+            <button className="btn-primary" type="button" disabled={!canContinue} onClick={() => setStep(2)}>
+              {t('next')}
+            </button>
+            {snap.status === 'needs_household' && snap.mode === 'remote' ? (
+              <button className="quiet-link" type="button" onClick={() => setWantJoin(true)}>
+                {t('joinCode')}
+              </button>
+            ) : null}
+          </>
         ) : (
           <>
             {canCreate ? null : (

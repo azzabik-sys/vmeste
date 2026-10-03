@@ -12,7 +12,8 @@ export interface BudgetApi {
   readonly mode: AppMode
   load(): Promise<Snapshot>
   subscribe(onChange: () => void): () => void
-  signIn(email: string): Promise<void>
+  signIn(email: string, password: string): Promise<void>
+  signUp(email: string, password: string): Promise<void>
   signOut(): Promise<void>
   createHousehold(input: CreateHouseholdInput): Promise<void>
   joinHousehold(code: string, displayName: string): Promise<void>
