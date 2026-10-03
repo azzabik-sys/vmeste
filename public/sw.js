@@ -27,7 +27,7 @@ self.addEventListener('fetch', (event) => {
       .catch(async () => {
         const cached = await caches.match(request)
         if (cached) return cached
-        const home = await caches.match('/')
+        const home = await caches.match(new URL('./', self.registration.scope).href)
         if (home) return home
         return new Response('Нет сети', {
           status: 503,

@@ -10,7 +10,10 @@ export function PeopleSheet({ open, onClose }: { open: boolean; onClose: () => v
   if (!open || snap.status !== 'ready') return null
 
   const me = snap.members.find((member) => member.userId === snap.userId)
-  const link = snap.household.inviteCode ? `${window.location.origin}/?join=${snap.household.inviteCode}` : ''
+  const homeUrl = new URL(import.meta.env.BASE_URL, window.location.origin)
+  const link = snap.household.inviteCode
+    ? `${homeUrl.href}?join=${snap.household.inviteCode}`
+    : homeUrl.href
 
   async function copy(text: string) {
     try {
