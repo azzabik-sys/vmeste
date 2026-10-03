@@ -1,0 +1,370 @@
+-- Вместе: общий бюджет пары.
+-- Вставьте весь файл в Supabase → SQL Editor → Run.
+-- Список категорий совпадает с src/domain/defaults.ts.
+
+create table if not exists public.households (
+  id uuid primary key default gen_random_uuid(),
+  name text not null check (char_length(name) between 1 and 60),
+  invite_code text not null unique check (char_length(invite_code) = 8),
+  currency text not null default 'RUB',
+  monthly_budget numeric(12, 2) not null default 0 check (monthly_budget >= 0 and monthly_budget < 100000000),
+  pace_enabled boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.household_members (
+  household_id uuid not null references public.households (id) on delete cascade,
+  user_id uuid not null references auth.users (id) on delete cascade,
+  role text not null check (role in ('owner', 'member')),
+  display_name text not null check (char_length(display_name) between 1 and 40),
+  primary key (household_id, user_id)
+);
+
+create unique index if not exists one_household_per_user
+  on public.household_members (user_id);
+
+create table if not exists public.categories (
+  id uuid primary key default gen_random_uuid(),
+  household_id uuid not null references public.households (id) on delete cascade,
+  name text not null check (char_length(trim(name)) between 1 and 40),
+  planned_amount numeric(12, 2) not null default 0 check (planned_amount >= 0 and planned_amount < 100000000),
+  kind text not null check (kind in ('fixed', 'pace')),
+  icon text not null default 'food',
+  sort_order integer not null default 0
+);
+
+create index if not exists categories_household_idx
+  on public.categories (household_id, sort_order);
+
+create table if not exists public.expenses (
+  id uuid primary key default gen_random_uuid(),
+  household_id uuid not null references public.households (id) on delete cascade,
+  category_id uuid not null references public.categories (id) on delete cascade,
+  amount numeric(12, 2) not null check (amount > 0 and amount < 100000000),
+  spent_on date not null,
+  note text not null default '',
+  created_by uuid not null references auth.users (id),
+  created_at timestamptz not null default now()
+);
+
+alter table public.households add column if not exists currency text not null default 'RUB';
+alter table public.households add column if not exists monthly_budget numeric(12, 2) not null default 0;
+alter table public.households add column if not exists pace_enabled boolean not null default true;
+alter table public.categories add column if not exists icon text not null default 'food';
+alter table public.expenses add column if not exists note text not null default '';
+
+create index if not exists expenses_household_day_idx
+  on public.expenses (household_id, spent_on);
+
+create or replace function public.is_member(hid uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.household_members
+    where household_id = hid and user_id = auth.uid()
+  );
+$$;
+
+create or replace function public.create_household(p_name text, p_display_name text)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  hid uuid;
+  code text;
+  inserted boolean := false;
+  i integer;
+  budget_name text;
+  person_name text;
+begin
+  if auth.uid() is null then
+    raise exception 'Нужно войти';
+  end if;
+
+  if exists (select 1 from public.household_members where user_id = auth.uid()) then
+    raise exception 'Вы уже в бюджете';
+  end if;
+
+  person_name := left(trim(coalesce(p_display_name, '')), 40);
+  if char_length(person_name) < 1 then
+    raise exception 'Введите имя';
+  end if;
+
+  budget_name := left(trim(coalesce(p_name, '')), 60);
+  if char_length(budget_name) < 1 then
+    budget_name := 'Наш бюджет';
+  end if;
+
+  for i in 1..5 loop
+    code := upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 8));
+    begin
+      insert into public.households (name, invite_code)
+      values (budget_name, code)
+      returning id into hid;
+      inserted := true;
+      exit;
+    exception
+      when unique_violation then
+        null;
+    end;
+  end loop;
+
+  if not inserted then
+    raise exception 'Не получилось создать код. Попробуйте ещё раз';
+  end if;
+
+  insert into public.household_members (household_id, user_id, role, display_name)
+  values (hid, auth.uid(), 'owner', person_name);
+
+  insert into public.categories (household_id, name, planned_amount, kind, icon, sort_order)
+  values
+    (hid, 'Жильё', 0, 'fixed', 'home', 0),
+    (hid, 'Коммунальные', 0, 'fixed', 'bill', 1),
+    (hid, 'Подписки', 0, 'fixed', 'card', 2),
+    (hid, 'Еда', 0, 'pace', 'food', 3),
+    (hid, 'Транспорт', 0, 'pace', 'car', 4),
+    (hid, 'Покупки', 0, 'pace', 'shop', 5),
+    (hid, 'Развлечения', 0, 'pace', 'game', 6),
+    (hid, 'Здоровье', 0, 'pace', 'heart', 7),
+    (hid, 'Кафе', 0, 'pace', 'coffee', 8);
+
+  return hid;
+end;
+$$;
+
+create or replace function public.join_household(p_code text, p_display_name text)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  hid uuid;
+  person_name text;
+begin
+  if auth.uid() is null then
+    raise exception 'Нужно войти';
+  end if;
+
+  if exists (select 1 from public.household_members where user_id = auth.uid()) then
+    raise exception 'Вы уже в бюджете';
+  end if;
+
+  person_name := left(trim(coalesce(p_display_name, '')), 40);
+  if char_length(person_name) < 1 then
+    raise exception 'Введите имя';
+  end if;
+
+  select id into hid
+  from public.households
+  where invite_code = upper(trim(coalesce(p_code, '')));
+
+  if hid is null then
+    raise exception 'Код не найден';
+  end if;
+
+  insert into public.household_members (household_id, user_id, role, display_name)
+  values (hid, auth.uid(), 'member', person_name);
+
+  return hid;
+end;
+$$;
+
+create or replace function public.leave_household()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  hid uuid;
+  remaining integer;
+begin
+  if auth.uid() is null then
+    raise exception 'Нужно войти';
+  end if;
+
+  select household_id into hid
+  from public.household_members
+  where user_id = auth.uid();
+
+  if hid is null then
+    return;
+  end if;
+
+  delete from public.household_members
+  where user_id = auth.uid() and household_id = hid;
+
+  select count(*) into remaining
+  from public.household_members
+  where household_id = hid;
+
+  if remaining = 0 then
+    delete from public.households where id = hid;
+  end if;
+end;
+$$;
+
+create or replace function public.guard_household()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  new.invite_code := old.invite_code;
+  new.name := left(trim(new.name), 60);
+  if char_length(new.name) < 1 then
+    raise exception 'Введите название';
+  end if;
+  return new;
+end;
+$$;
+
+create or replace function public.guard_member()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  new.household_id := old.household_id;
+  new.user_id := old.user_id;
+  new.role := old.role;
+  new.display_name := left(trim(new.display_name), 40);
+  if char_length(new.display_name) < 1 then
+    raise exception 'Введите имя';
+  end if;
+  return new;
+end;
+$$;
+
+create or replace function public.guard_expense()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1
+    from public.categories
+    where id = new.category_id and household_id = new.household_id
+  ) then
+    raise exception 'Категория не из этого бюджета';
+  end if;
+
+  if tg_op = 'INSERT' then
+    if new.created_by is distinct from auth.uid() then
+      raise exception 'Чужая трата';
+    end if;
+  else
+    new.created_by := old.created_by;
+    new.household_id := old.household_id;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists households_guard on public.households;
+create trigger households_guard
+  before update on public.households
+  for each row execute function public.guard_household();
+
+drop trigger if exists members_guard on public.household_members;
+create trigger members_guard
+  before update on public.household_members
+  for each row execute function public.guard_member();
+
+drop trigger if exists expenses_guard on public.expenses;
+create trigger expenses_guard
+  before insert or update on public.expenses
+  for each row execute function public.guard_expense();
+
+alter table public.households enable row level security;
+alter table public.household_members enable row level security;
+alter table public.categories enable row level security;
+alter table public.expenses enable row level security;
+
+drop policy if exists households_select on public.households;
+create policy households_select on public.households
+  for select to authenticated
+  using (public.is_member(id));
+
+drop policy if exists households_update on public.households;
+create policy households_update on public.households
+  for update to authenticated
+  using (public.is_member(id))
+  with check (public.is_member(id));
+
+drop policy if exists members_select on public.household_members;
+create policy members_select on public.household_members
+  for select to authenticated
+  using (public.is_member(household_id));
+
+drop policy if exists members_update on public.household_members;
+create policy members_update on public.household_members
+  for update to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid());
+
+drop policy if exists categories_all on public.categories;
+create policy categories_all on public.categories
+  for all to authenticated
+  using (public.is_member(household_id))
+  with check (public.is_member(household_id));
+
+drop policy if exists expenses_all on public.expenses;
+create policy expenses_all on public.expenses
+  for all to authenticated
+  using (public.is_member(household_id))
+  with check (public.is_member(household_id));
+
+revoke all on table public.households from anon, authenticated;
+revoke all on table public.household_members from anon, authenticated;
+revoke all on table public.categories from anon, authenticated;
+revoke all on table public.expenses from anon, authenticated;
+
+grant usage on schema public to authenticated;
+grant select, update on public.households to authenticated;
+grant select, update on public.household_members to authenticated;
+grant select, insert, update, delete on public.categories to authenticated;
+grant select, insert, update, delete on public.expenses to authenticated;
+
+revoke all on function public.is_member(uuid) from public, anon;
+revoke all on function public.create_household(text, text) from public, anon;
+revoke all on function public.join_household(text, text) from public, anon;
+revoke all on function public.leave_household() from public, anon;
+grant execute on function public.is_member(uuid) to authenticated;
+grant execute on function public.create_household(text, text) to authenticated;
+grant execute on function public.join_household(text, text) to authenticated;
+grant execute on function public.leave_household() to authenticated;
+
+do $$
+begin
+  begin
+    alter publication supabase_realtime add table public.expenses;
+  exception
+    when duplicate_object then null;
+  end;
+  begin
+    alter publication supabase_realtime add table public.categories;
+  exception
+    when duplicate_object then null;
+  end;
+  begin
+    alter publication supabase_realtime add table public.household_members;
+  exception
+    when duplicate_object then null;
+  end;
+  begin
+    alter publication supabase_realtime add table public.households;
+  exception
+    when duplicate_object then null;
+  end;
+end $$;
