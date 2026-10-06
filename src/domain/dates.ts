@@ -1,5 +1,8 @@
 import { formatLocale } from './formatLocale'
 
+/** Филиппины, UTC+8. На 5 часов позже Москвы, без перехода на летнее время. */
+export const TIME_ZONE = 'Asia/Manila'
+
 const MONTHS_GENITIVE = [
   'января',
   'февраля',
@@ -24,9 +27,9 @@ export type MonthInfo = {
   end: string
 }
 
-export function todayISO(now = new Date(), timeZone?: string): string {
+export function todayISO(now = new Date(), timeZone = TIME_ZONE): string {
   return new Intl.DateTimeFormat('en-CA', {
-    ...(timeZone ? { timeZone } : {}),
+    timeZone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -72,11 +75,11 @@ export function dayHeading(iso: string, today: string): string {
   return iso === today ? `Сегодня, ${label}` : label
 }
 
-export function formatTime(iso: string, timeZone?: string): string {
+export function formatTime(iso: string, timeZone = TIME_ZONE): string {
   return new Intl.DateTimeFormat(formatLocale(), {
     hour: '2-digit',
     minute: '2-digit',
-    ...(timeZone ? { timeZone } : {}),
+    timeZone,
   }).format(new Date(iso))
 }
 

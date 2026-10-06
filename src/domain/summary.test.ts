@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { monthOf, todayISO } from './dates'
+import { formatTime, monthOf, todayISO } from './dates'
 import { parseAmount, parsePlan, sumRub } from './money'
 import { judgePace, spendTone } from './pace'
 import { summarizeMonth } from './summary'
@@ -153,16 +153,20 @@ describe('dates and money', () => {
     expect(monthOf('2026-02-10').days).toBe(28)
   })
 
-  it('сегодня берётся из местного календаря, а не из даты UTC', () => {
+  it('сегодня и часы истории идут по Филиппинам, на 5 часов позже Москвы', () => {
     const eveningBeforeMidnightUtc = new Date('2026-10-03T21:30:00.000Z')
-    const local = new Intl.DateTimeFormat('en-CA', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(eveningBeforeMidnightUtc)
-    expect(todayISO(eveningBeforeMidnightUtc)).toBe(local)
+    expect(todayISO(eveningBeforeMidnightUtc)).toBe('2026-10-04')
     expect(todayISO(eveningBeforeMidnightUtc, 'Europe/Moscow')).toBe('2026-10-04')
     expect(todayISO(eveningBeforeMidnightUtc, 'UTC')).toBe('2026-10-03')
+
+    const entered = '2026-10-05T09:14:28.362Z'
+    const clock = (zone: string) =>
+      new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: zone })
+        .format(new Date(entered))
+        .replace(/\D/g, '')
+    expect(formatTime(entered).replace(/\D/g, '')).toBe('1714')
+    expect(clock('Europe/Moscow')).toBe('1214')
+    expect(clock('Asia/Manila')).toBe('1714')
   })
 
   it('понимает сумму с пробелом и запятой', () => {
