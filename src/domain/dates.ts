@@ -1,7 +1,5 @@
 import { formatLocale } from './formatLocale'
 
-export const TIME_ZONE = 'Europe/Moscow'
-
 const MONTHS_GENITIVE = [
   'января',
   'февраля',
@@ -26,9 +24,9 @@ export type MonthInfo = {
   end: string
 }
 
-export function todayISO(now = new Date(), timeZone = TIME_ZONE): string {
+export function todayISO(now = new Date(), timeZone?: string): string {
   return new Intl.DateTimeFormat('en-CA', {
-    timeZone,
+    ...(timeZone ? { timeZone } : {}),
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -74,11 +72,11 @@ export function dayHeading(iso: string, today: string): string {
   return iso === today ? `Сегодня, ${label}` : label
 }
 
-export function formatTime(iso: string): string {
+export function formatTime(iso: string, timeZone?: string): string {
   return new Intl.DateTimeFormat(formatLocale(), {
     hour: '2-digit',
     minute: '2-digit',
-    timeZone: TIME_ZONE,
+    ...(timeZone ? { timeZone } : {}),
   }).format(new Date(iso))
 }
 

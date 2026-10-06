@@ -153,9 +153,16 @@ describe('dates and money', () => {
     expect(monthOf('2026-02-10').days).toBe(28)
   })
 
-  it('сегодня в Москве не сдвигается из-за UTC', () => {
+  it('сегодня берётся из местного календаря, а не из даты UTC', () => {
     const eveningBeforeMidnightUtc = new Date('2026-10-03T21:30:00.000Z')
-    expect(todayISO(eveningBeforeMidnightUtc)).toBe('2026-10-04')
+    const local = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(eveningBeforeMidnightUtc)
+    expect(todayISO(eveningBeforeMidnightUtc)).toBe(local)
+    expect(todayISO(eveningBeforeMidnightUtc, 'Europe/Moscow')).toBe('2026-10-04')
+    expect(todayISO(eveningBeforeMidnightUtc, 'UTC')).toBe('2026-10-03')
   })
 
   it('понимает сумму с пробелом и запятой', () => {
