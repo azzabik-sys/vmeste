@@ -4,6 +4,8 @@ import { CURRENCIES } from '../domain/money'
 import { useBudget } from './budget'
 import { LanguageSwitch, useI18n } from './i18n'
 import { Icon } from './icons'
+import { LegalScreen } from './LegalScreen'
+import type { LegalId } from './legalCopy'
 import { MonthPicker } from './widgets'
 
 export function SettingsScreen({
@@ -21,8 +23,9 @@ export function SettingsScreen({
   const { t } = useI18n()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [confirmAccount, setConfirmAccount] = useState(false)
-  const pages = `${import.meta.env.BASE_URL}`
+  const [legal, setLegal] = useState<LegalId | null>(null)
   if (snap.status !== 'ready') return null
+  if (legal) return <LegalScreen page={legal} inset="tabs" onBack={() => setLegal(null)} onOpen={setLegal} />
   const { household } = snap
 
   return (
@@ -114,8 +117,12 @@ export function SettingsScreen({
         </>
       ) : null}
       <p className="legal-links">
-        <a href={`${pages}privacy.html`}>{t('privacy')}</a>
-        <a href={`${pages}support.html`}>{t('support')}</a>
+        <button type="button" onClick={() => setLegal('privacy')}>
+          {t('privacy')}
+        </button>
+        <button type="button" onClick={() => setLegal('support')}>
+          {t('support')}
+        </button>
       </p>
     </section>
   )

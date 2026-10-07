@@ -150,11 +150,53 @@ h1, h2, p { margin: 0; }
   margin: 18px 0 8px;
 }
 
-.legal-links a {
+.legal-links a,
+.legal-links button,
+.text-link {
+  border: 0;
+  background: none;
+  padding: 0;
   color: #77736d;
   font-size: 13px;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.legal-gate {
+  padding: calc(4px + env(safe-area-inset-top)) 16px 32px;
+}
+
+.onboard-body > .select-shell,
+.legal-gate > .select-shell,
+.screen > .select-shell {
+  margin: 4px 0 14px;
+}
+
+.legal-doc h2 {
+  font-size: 18px;
+  font-weight: 650;
+  margin: 22px 0 8px;
+}
+
+.legal-doc p,
+.legal-doc li {
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.legal-doc p { margin: 0 0 10px; }
+
+.legal-doc ul {
+  margin: 0 0 10px;
+  padding-inline-start: 1.2em;
+}
+
+.legal-doc li { margin: 0 0 8px; }
+
+.legal-doc a,
+.legal-doc .text-link {
+  color: #171714;
+  font-size: 16px;
 }
 
 .delete-note {

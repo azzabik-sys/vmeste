@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useBudget } from './budget'
-import { useI18n } from './i18n'
+import { LanguageSwitch, useI18n } from './i18n'
+import { LegalScreen } from './LegalScreen'
+import type { LegalId } from './legalCopy'
 
 export function LoadingScreen() {
   const { t } = useI18n()
@@ -32,19 +34,28 @@ export function GateScreen() {
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
   const [pending, setPending] = useState(false)
+  const [legal, setLegal] = useState<LegalId | null>(null)
   const emailOk = /^\S+@\S+\.\S+$/.test(email.trim())
   const loginOk = emailOk && password.length >= 6
   const codeOk = emailOk && code.replace(/\s+/g, '').length >= 6 && password.length >= 6
-  const pages = `${import.meta.env.BASE_URL}`
 
   function go(next: 'login' | 'forgot' | 'code') {
     dismissError()
     setStep(next)
   }
 
+  if (legal) {
+    return (
+      <main className="shell">
+        <LegalScreen page={legal} inset="page" onBack={() => setLegal(null)} onOpen={setLegal} />
+      </main>
+    )
+  }
+
   return (
     <main className="shell onboard">
       <div className="onboard-body">
+        <LanguageSwitch />
         <h1>{step === 'login' ? t('signIn') : t('forgotTitle')}</h1>
         <p className="sub">{step === 'login' ? t('signInSub') : step === 'forgot' ? t('forgotSub') : t('codeSent', { email: email.trim() })}</p>
         {error ? (
@@ -176,8 +187,12 @@ export function GateScreen() {
           </form>
         ) : null}
         <p className="legal-links">
-          <a href={`${pages}privacy.html`}>{t('privacy')}</a>
-          <a href={`${pages}support.html`}>{t('support')}</a>
+          <button type="button" onClick={() => setLegal('privacy')}>
+            {t('privacy')}
+          </button>
+          <button type="button" onClick={() => setLegal('support')}>
+            {t('support')}
+          </button>
         </p>
       </div>
     </main>

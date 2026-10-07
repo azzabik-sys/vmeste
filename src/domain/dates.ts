@@ -3,21 +3,6 @@ import { formatLocale } from './formatLocale'
 /** Филиппины, UTC+8. На 5 часов позже Москвы, без перехода на летнее время. */
 export const TIME_ZONE = 'Asia/Manila'
 
-const MONTHS_GENITIVE = [
-  'января',
-  'февраля',
-  'марта',
-  'апреля',
-  'мая',
-  'июня',
-  'июля',
-  'августа',
-  'сентября',
-  'октября',
-  'ноября',
-  'декабря',
-]
-
 export type MonthInfo = {
   year: number
   month: number
@@ -65,14 +50,33 @@ export function monthTitle(iso: string): string {
   return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${year}`
 }
 
+function utcDate(iso: string): Date {
+  const { year, month, day } = parseISODate(iso)
+  return new Date(Date.UTC(year, month - 1, day))
+}
+
+function capitalize(value: string, locale: string): string {
+  if (!value) return value
+  return value.charAt(0).toLocaleUpperCase(locale) + value.slice(1)
+}
+
+function relativeDay(offset: -1 | 0): string {
+  const locale = formatLocale()
+  const word = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(offset, 'day')
+  return capitalize(word, locale)
+}
+
 export function dayLabel(iso: string): string {
-  const { month, day } = parseISODate(iso)
-  return `${day} ${MONTHS_GENITIVE[month - 1]}`
+  return new Intl.DateTimeFormat(formatLocale(), {
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(utcDate(iso))
 }
 
 export function dayHeading(iso: string, today: string): string {
   const label = dayLabel(iso)
-  return iso === today ? `Сегодня, ${label}` : label
+  return iso === today ? `${relativeDay(0)}, ${label}` : label
 }
 
 export function formatTime(iso: string, timeZone = TIME_ZONE): string {
@@ -87,8 +91,6 @@ export function inMonth(iso: string, month: MonthInfo): boolean {
   return iso >= month.start && iso <= month.end
 }
 
-const MONTHS_SHORT = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
-
 export function shiftISO(iso: string, days: number): string {
   const { year, month, day } = parseISODate(iso)
   const date = new Date(Date.UTC(year, month - 1, day + days))
@@ -98,40 +100,24 @@ export function shiftISO(iso: string, days: number): string {
   return `${y}-${m}-${d}`
 }
 
-const RELATIVE: Record<string, { today: string; yesterday: string }> = {
-  'ru-RU': { today: 'Сегодня', yesterday: 'Вчера' },
-  'en-US': { today: 'Today', yesterday: 'Yesterday' },
-  'vi-VN': { today: 'Hôm nay', yesterday: 'Hôm qua' },
-}
-
 export function formatDayCount(count: number, locale = formatLocale()): string {
   const n = Math.abs(Math.trunc(count))
-  if (locale.startsWith('vi')) return `${n} ngày`
-  if (locale.startsWith('en')) return n === 1 ? '1 day' : `${n} days`
-  const mod100 = n % 100
-  const mod10 = n % 10
-  if (mod100 > 10 && mod100 < 20) return `${n} дней`
-  if (mod10 === 1) return `${n} день`
-  if (mod10 >= 2 && mod10 <= 4) return `${n} дня`
-  return `${n} дней`
+  return new Intl.NumberFormat(locale, { style: 'unit', unit: 'day', unitDisplay: 'long' }).format(n)
 }
 
 export function shortDate(iso: string): string {
-  const { year, month, day } = parseISODate(iso)
-  if (formatLocale() === 'ru-RU') return `${day} ${MONTHS_SHORT[month - 1]}. ${year}`
   return new Intl.DateTimeFormat(formatLocale(), {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     timeZone: 'UTC',
-  }).format(new Date(Date.UTC(year, month - 1, day)))
+  }).format(utcDate(iso))
 }
 
 export function historyHeading(iso: string, today: string): string {
   const label = shortDate(iso)
-  const words = RELATIVE[formatLocale()] ?? RELATIVE['ru-RU']
-  if (iso === today) return `${words.today}, ${label}`
-  if (iso === shiftISO(today, -1)) return `${words.yesterday}, ${label}`
+  if (iso === today) return `${relativeDay(0)}, ${label}`
+  if (iso === shiftISO(today, -1)) return `${relativeDay(-1)}, ${label}`
   return label
 }
 
