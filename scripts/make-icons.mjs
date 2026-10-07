@@ -1,5 +1,5 @@
 import { deflateSync, crc32 } from 'node:zlib'
-import { writeFileSync } from 'node:fs'
+import { mkdirSync, writeFileSync } from 'node:fs'
 
 function chunk(type, data) {
   const length = Buffer.alloc(4)
@@ -29,6 +29,32 @@ function png(size, paint) {
   ihdr.writeUInt32BE(size, 4)
   ihdr[8] = 8
   ihdr[9] = 6
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    chunk('IHDR', ihdr),
+    chunk('IDAT', deflateSync(raw)),
+    chunk('IEND', Buffer.alloc(0)),
+  ])
+}
+
+function pngRgb(size, paint) {
+  const raw = Buffer.alloc((size * 3 + 1) * size)
+  for (let y = 0; y < size; y += 1) {
+    const row = y * (size * 3 + 1)
+    raw[row] = 0
+    for (let x = 0; x < size; x += 1) {
+      const [r, g, b] = paint(x, y, size)
+      const index = row + 1 + x * 3
+      raw[index] = r
+      raw[index + 1] = g
+      raw[index + 2] = b
+    }
+  }
+  const ihdr = Buffer.alloc(13)
+  ihdr.writeUInt32BE(size, 0)
+  ihdr.writeUInt32BE(size, 4)
+  ihdr[8] = 8
+  ihdr[9] = 2
   return Buffer.concat([
     Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
     chunk('IHDR', ihdr),
@@ -72,6 +98,25 @@ function corner(nx, ny, left, right, top, bottom, radius) {
   return Math.hypot(nx - cx, ny - cy) <= radius
 }
 
+function paintStore(x, y, size) {
+  const nx = (x + 0.5) / size
+  const ny = (y + 0.5) / size
+  let color = [25, 24, 21]
+  const heads = [
+    [0.38, 0.4, 0.092],
+    [0.62, 0.4, 0.092],
+  ]
+  for (const [cx, cy, rad] of heads) {
+    if (Math.hypot(nx - cx, ny - cy) <= rad) color = [250, 249, 246]
+  }
+  const shoulder = ((nx - 0.5) / 0.34) ** 2 + ((ny - 0.7) / 0.2) ** 2
+  if (shoulder <= 1 && ny > 0.52) color = [250, 249, 246]
+  return color
+}
+
 for (const size of [180, 192, 512]) {
   writeFileSync(new URL(`../public/icon-${size}.png`, import.meta.url), png(size, paint))
 }
+
+mkdirSync(new URL('../store/', import.meta.url), { recursive: true })
+writeFileSync(new URL('../store/icon-1024.png', import.meta.url), pngRgb(1024, paintStore))

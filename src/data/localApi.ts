@@ -122,7 +122,16 @@ export function createLocalApi(): BudgetApi {
     async signUp() {
       throw new Error('Общий вход включается после подключения Supabase.')
     },
+    async requestPasswordReset() {
+      throw new Error('Новый пароль включается на общем сайте.')
+    },
+    async confirmPasswordReset() {
+      throw new Error('Новый пароль включается на общем сайте.')
+    },
     async signOut() {},
+    async deleteAccount() {
+      throw new Error('Удаление аккаунта включается на общем сайте.')
+    },
     async createHousehold(input) {
       if (read()) throw new Error('Бюджет на этом телефоне уже есть.')
       storageSet(createHouse(input, USER_ID))

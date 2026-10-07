@@ -42,6 +42,8 @@ export type Expense = {
   spentOn: string
   note: string
   createdBy: string
+  /** Имя на момент траты. Остаётся в общем бюджете, если человек удалил аккаунт. */
+  createdByName?: string
   createdAt: string
 }
 

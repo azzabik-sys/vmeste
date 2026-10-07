@@ -40,7 +40,8 @@ type ExpenseRow = {
   amount: number | string
   spent_on: string
   note: string | null
-  created_by: string
+  created_by: string | null
+  created_by_name: string | null
   created_at: string
 }
 
@@ -81,7 +82,8 @@ function mapExpense(row: ExpenseRow): Expense {
     amount: Number(row.amount),
     spentOn: row.spent_on,
     note: row.note ?? '',
-    createdBy: row.created_by,
+    createdBy: row.created_by ?? '',
+    createdByName: row.created_by_name ?? '',
     createdAt: row.created_at,
   }
 }
@@ -188,7 +190,7 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
         .order('sort_order'),
       supabase
         .from('expenses')
-        .select('id, household_id, category_id, amount, spent_on, note, created_by, created_at')
+        .select('id, household_id, category_id, amount, spent_on, note, created_by, created_by_name, created_at')
         .eq('household_id', householdId)
         .order('created_at', { ascending: false }),
     ])
@@ -250,10 +252,37 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       fail(error)
       if (!data.session) throw new Error('Вход не открылся. Нажмите «Войти» с этой же почтой и паролем.')
     },
+    async requestPasswordReset(email) {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim())
+      fail(error)
+    },
+    async confirmPasswordReset(email, code, password) {
+      const fromLink = code.match(/[?&#]token=([^&\s#]+)/i)
+      const token = (fromLink ? decodeURIComponent(fromLink[1]) : code).replace(/\s+/g, '')
+      if (token.length < 6) throw new Error('Вставьте ссылку или код из письма.')
+      if (password.length < 6) throw new Error('Пароль должен быть не короче 6 символов.')
+      // Бесплатное письмо Supabase присылает длинную ссылку, а не короткий код.
+      // Ссылку не открываем: из неё берётся token и пароль меняется здесь.
+      const { error } =
+        token.length > 12
+          ? await supabase.auth.verifyOtp({ token_hash: token, type: 'recovery' })
+          : await supabase.auth.verifyOtp({ email: email.trim(), token, type: 'recovery' })
+      fail(error)
+      const { error: updateError } = await supabase.auth.updateUser({ password })
+      fail(updateError)
+    },
     async signOut() {
       const { error } = await supabase.auth.signOut()
       fail(error)
       unwatch()
+    },
+    async deleteAccount() {
+      const { error } = await supabase.rpc('delete_account')
+      fail(error)
+      unwatch()
+      // Пользователь в базе уже удалён. Локальный выход не должен звать сервер.
+      const { error: signOutError } = await supabase.auth.signOut({ scope: 'local' })
+      fail(signOutError)
     },
     async createHousehold(input) {
       const name = input.name.trim().slice(0, 60) || 'Наш бюджет'

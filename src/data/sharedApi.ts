@@ -68,7 +68,16 @@ export function createSharedApi(): BudgetApi {
     async signUp() {
       throw new Error('Общий вход включается после подключения Supabase.')
     },
+    async requestPasswordReset() {
+      throw new Error('Новый пароль включается на общем сайте.')
+    },
+    async confirmPasswordReset() {
+      throw new Error('Новый пароль включается на общем сайте.')
+    },
     async signOut() {},
+    async deleteAccount() {
+      throw new Error('Удаление аккаунта включается на общем сайте.')
+    },
     async createHousehold(input) {
       const who = readWho()
       const displayName = input.displayName.trim()

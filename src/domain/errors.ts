@@ -6,6 +6,9 @@ export function humanError(error: unknown): string {
   if (/already registered|already exists/i.test(message)) return 'Этот вход уже есть. Нажмите «Войти».'
   if (/password/i.test(message) && /at least|short|weak/i.test(message)) return 'Пароль должен быть не короче 6 символов.'
   if (/email not confirmed/i.test(message)) return 'Почта ещё не подтверждена. Создайте вход ещё раз.'
+  if (/otp|token/i.test(message) && /expired|invalid/i.test(message)) {
+    return 'Код не подошёл или устарел. Пришлите новый.'
+  }
   if (/rate limit|too many/i.test(message)) return 'Слишком много писем. Подождите пару минут.'
   if (/relation .* does not exist|schema cache|PGRST205/i.test(message)) {
     return 'База ещё пустая. Нужно выполнить supabase/schema.sql в SQL Editor.'

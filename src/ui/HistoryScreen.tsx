@@ -35,7 +35,7 @@ export function HistoryScreen({
       if (!needle || focusCategoryId) return true
       const category = categories.get(expense.categoryId)
       const label = category ? categoryTitle(category.icon, category.name, t) : ''
-      const person = members.get(expense.createdBy) ?? ''
+      const person = members.get(expense.createdBy) || expense.createdByName || ''
       const title = `${expense.note} ${category?.name ?? ''} ${label} ${person}`.toLocaleLowerCase(formatLocale())
       return title.includes(needle)
     })
@@ -115,7 +115,7 @@ export function HistoryScreen({
                 const category = categories.get(expense.categoryId)
                 const label = category ? categoryTitle(category.icon, category.name, t) : t('category')
                 const title = expense.note.trim() || label || t('expense')
-                const person = (members.get(expense.createdBy) || '').trim()
+                const person = (members.get(expense.createdBy) || expense.createdByName || '').trim()
                 const initial = person[0]?.toUpperCase() || '?'
                 const subtitle = expense.note.trim() ? [label, person].filter(Boolean).join(' · ') : person
                 return (

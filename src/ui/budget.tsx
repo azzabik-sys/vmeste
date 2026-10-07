@@ -18,7 +18,11 @@ type BudgetContextValue = {
   refresh: () => Promise<void>
   signIn: (email: string, password: string) => Promise<boolean>
   signUp: (email: string, password: string) => Promise<boolean>
+  requestPasswordReset: (email: string) => Promise<boolean>
+  confirmPasswordReset: (email: string, code: string, password: string) => Promise<boolean>
   signOut: () => Promise<boolean>
+  deleteAccount: () => Promise<boolean>
+  dismissError: () => void
   createHousehold: (input: CreateHouseholdInput) => Promise<boolean>
   joinHousehold: (code: string, displayName: string) => Promise<boolean>
   leaveHousehold: () => Promise<boolean>
@@ -128,7 +132,12 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     refresh,
     signIn: (email, password) => run(() => apiRef.current!.signIn(email, password)),
     signUp: (email, password) => run(() => apiRef.current!.signUp(email, password)),
+    requestPasswordReset: (email) => run(() => apiRef.current!.requestPasswordReset(email)),
+    confirmPasswordReset: (email, code, password) =>
+      run(() => apiRef.current!.confirmPasswordReset(email, code, password)),
     signOut: () => run(() => apiRef.current!.signOut()),
+    deleteAccount: () => run(() => apiRef.current!.deleteAccount()),
+    dismissError: () => setError(null),
     createHousehold: (input) => run(() => apiRef.current!.createHousehold(input)),
     joinHousehold: (code, displayName) => run(() => apiRef.current!.joinHousehold(code, displayName)),
     leaveHousehold: () => run(() => apiRef.current!.leaveHousehold()),

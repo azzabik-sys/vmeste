@@ -14,7 +14,10 @@ export interface BudgetApi {
   subscribe(onChange: () => void): () => void
   signIn(email: string, password: string): Promise<void>
   signUp(email: string, password: string): Promise<void>
+  requestPasswordReset(email: string): Promise<void>
+  confirmPasswordReset(email: string, code: string, password: string): Promise<void>
   signOut(): Promise<void>
+  deleteAccount(): Promise<void>
   createHousehold(input: CreateHouseholdInput): Promise<void>
   joinHousehold(code: string, displayName: string): Promise<void>
   leaveHousehold(): Promise<void>

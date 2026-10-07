@@ -17,9 +17,11 @@ export function SettingsScreen({
   onMonth: (monthStart: string) => void
   onBack: () => void
 }) {
-  const { snap, updateHouseholdSettings, deleteBudget } = useBudget()
+  const { snap, updateHouseholdSettings, deleteBudget, deleteAccount } = useBudget()
   const { t } = useI18n()
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmAccount, setConfirmAccount] = useState(false)
+  const pages = `${import.meta.env.BASE_URL}`
   if (snap.status !== 'ready') return null
   const { household } = snap
 
@@ -92,6 +94,29 @@ export function SettingsScreen({
         <Icon name="trash" size={18} />
         {confirmDelete ? t('deleteSure') : t('deleteBudget')}
       </button>
+      {snap.mode === 'remote' ? (
+        <>
+          <p className="delete-note">{t('deleteAccountNote')}</p>
+          <button
+            className="btn-danger"
+            type="button"
+            onClick={() => {
+              if (!confirmAccount) {
+                setConfirmAccount(true)
+                return
+              }
+              void deleteAccount()
+            }}
+          >
+            <Icon name="trash" size={18} />
+            {confirmAccount ? t('deleteAccountSure') : t('deleteAccount')}
+          </button>
+        </>
+      ) : null}
+      <p className="legal-links">
+        <a href={`${pages}privacy.html`}>{t('privacy')}</a>
+        <a href={`${pages}support.html`}>{t('support')}</a>
+      </p>
     </section>
   )
 }

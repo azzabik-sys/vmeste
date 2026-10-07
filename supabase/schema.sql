@@ -263,8 +263,11 @@ begin
       raise exception 'Чужая трата';
     end if;
   else
-    new.created_by := old.created_by;
     new.household_id := old.household_id;
+    -- Удаление аккаунта само ставит флаг и обнуляет автора. Обычный запрос подменить автора не может.
+    if current_setting('vmeste.deleting_account', true) is distinct from '1' then
+      new.created_by := old.created_by;
+    end if;
   end if;
 
   return new;
@@ -344,6 +347,86 @@ grant execute on function public.is_member(uuid) to authenticated;
 grant execute on function public.create_household(text, text) to authenticated;
 grant execute on function public.join_household(text, text) to authenticated;
 grant execute on function public.leave_household() to authenticated;
+
+-- Удаление аккаунта: вход исчезает, чужой общий бюджет остаётся.
+alter table public.expenses add column if not exists created_by_name text not null default '';
+
+do $$
+declare
+  cname text;
+begin
+  select con.conname into cname
+  from pg_constraint con
+  join pg_class rel on rel.oid = con.conrelid
+  join pg_namespace nsp on nsp.oid = rel.relnamespace
+  where nsp.nspname = 'public'
+    and rel.relname = 'expenses'
+    and con.contype = 'f'
+    and pg_get_constraintdef(con.oid) ilike '%created_by%';
+  if cname is not null then
+    execute format('alter table public.expenses drop constraint %I', cname);
+  end if;
+end $$;
+
+alter table public.expenses alter column created_by drop not null;
+
+alter table public.expenses
+  drop constraint if exists expenses_created_by_fkey;
+
+alter table public.expenses
+  add constraint expenses_created_by_fkey
+  foreign key (created_by) references auth.users (id) on delete set null;
+
+create or replace function public.delete_account()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  uid uuid := auth.uid();
+  hid uuid;
+  person text;
+  remaining integer;
+begin
+  if uid is null then
+    raise exception 'Нужно войти';
+  end if;
+
+  select household_id, display_name into hid, person
+  from public.household_members
+  where user_id = uid;
+
+  if hid is not null then
+    -- Триггер guard_expense иначе вернёт автора обратно, и удаление пользователя упрётся в внешний ключ.
+    perform set_config('vmeste.deleting_account', '1', true);
+
+    update public.expenses
+    set created_by_name = case
+          when created_by_name = '' then left(coalesce(person, ''), 40)
+          else created_by_name
+        end,
+        created_by = null
+    where created_by = uid;
+
+    select count(*) into remaining
+    from public.household_members
+    where household_id = hid and user_id <> uid;
+
+    if remaining = 0 then
+      delete from public.households where id = hid;
+    else
+      delete from public.household_members
+      where user_id = uid and household_id = hid;
+    end if;
+  end if;
+
+  delete from auth.users where id = uid;
+end;
+$$;
+
+revoke all on function public.delete_account() from public, anon;
+grant execute on function public.delete_account() to authenticated;
 
 do $$
 begin
