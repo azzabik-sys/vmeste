@@ -164,7 +164,7 @@ await page.getByText('155 000').waitFor()
 
 await page.getByRole('navigation', { name: 'Разделы' }).getByRole('button', { name: 'Настройки' }).click()
 await page.getByRole('heading', { name: 'Настройки' }).waitFor()
-await page.getByRole('switch', { name: 'Контроль темпа расходов' }).waitFor()
+await page.getByRole('switch', { name: 'Предупреждения о темпе' }).waitFor()
 await page.screenshot({ path: `${shots}/09-settings.png` })
 
 await page.reload()

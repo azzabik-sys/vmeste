@@ -4,7 +4,7 @@ import { rememberJoinCode } from './data/joinCode'
 import { App } from './ui/App'
 import { BudgetProvider } from './ui/budget'
 import { I18nProvider } from './ui/i18n'
-import { LookProvider } from './ui/look'
+import './ui/look'
 import './styles.css'
 
 const join = new URLSearchParams(window.location.search).get('join')
@@ -21,11 +21,9 @@ if (!root) throw new Error('Нет корневого элемента')
 createRoot(root).render(
   <StrictMode>
     <I18nProvider>
-      <LookProvider>
-        <BudgetProvider>
-          <App />
-        </BudgetProvider>
-      </LookProvider>
+      <BudgetProvider>
+        <App />
+      </BudgetProvider>
     </I18nProvider>
   </StrictMode>,
 )

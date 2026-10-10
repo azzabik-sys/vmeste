@@ -15,7 +15,7 @@ import type {
   MemberRole,
   Snapshot,
 } from './types'
-import { CURRENCY_CODES } from './types'
+import { isCurrency } from '../domain/money'
 
 type HouseholdRow = {
   id: string
@@ -52,7 +52,8 @@ function fail(error: { message: string } | null): void {
 }
 
 function asCurrency(value: string | null): CurrencyCode {
-  return (CURRENCY_CODES as readonly string[]).includes(String(value)) ? (value as CurrencyCode) : 'RUB'
+  const code = String(value || '')
+  return isCurrency(code) ? code : 'RUB'
 }
 
 function mapMember(row: MemberRow): Member {

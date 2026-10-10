@@ -1,6 +1,6 @@
 import { iconForName } from '../domain/defaults'
 import { createId } from '../domain/id'
-import { sumRub } from '../domain/money'
+import { isCurrency, sumRub } from '../domain/money'
 import type {
   Category,
   CategoryKind,
@@ -12,8 +12,6 @@ import type {
   Member,
   NewCategory,
 } from './types'
-import { CURRENCY_CODES } from './types'
-
 export type HouseDb = {
   household: Household
   members: Member[]
@@ -43,7 +41,8 @@ export type HouseOp =
   | { op: 'removeExpense'; userId: string; id: string }
 
 function asCurrency(value: unknown): CurrencyCode {
-  return (CURRENCY_CODES as readonly string[]).includes(String(value)) ? (value as CurrencyCode) : 'RUB'
+  const code = String(value || '')
+  return isCurrency(code) ? code : 'RUB'
 }
 
 function asKind(value: unknown): CategoryKind {

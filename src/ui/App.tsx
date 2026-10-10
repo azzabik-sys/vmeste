@@ -8,7 +8,6 @@ import { ExpenseSheet } from './ExpenseSheet'
 import { HistoryScreen } from './HistoryScreen'
 import { HomeScreen } from './HomeScreen'
 import { Icon } from './icons'
-import { useLook } from './look'
 import { Onboarding } from './Onboarding'
 import { PeopleSheet } from './PeopleSheet'
 import { PlanScreen } from './PlanScreen'
@@ -27,8 +26,6 @@ const TABS: { id: Tab; label: Tab; icon: string }[] = [
 export function App() {
   const { snap, error, refresh } = useBudget()
   const { t } = useI18n()
-  const { look } = useLook()
-  const oldChrome = look !== 'new'
   const [tab, setTab] = useState<Tab>('home')
   const [expenseOpen, setExpenseOpen] = useState(false)
   const [editing, setEditing] = useState<Expense | null>(null)
@@ -115,12 +112,7 @@ export function App() {
       ) : null}
       {tab === 'plan' ? <PlanScreen /> : null}
       {tab === 'settings' ? (
-        <SettingsScreen
-          monthStart={monthStart}
-          today={today}
-          onMonth={setMonthStart}
-          onBack={() => setTab('home')}
-        />
+        <SettingsScreen />
       ) : null}
       {tab === 'home' ? (
         <button
@@ -142,16 +134,7 @@ export function App() {
             aria-current={tab === item.id ? 'page' : undefined}
             onClick={() => setTab(item.id)}
           >
-            <Icon
-              name={
-                item.id === 'plan' && look === 'classic'
-                  ? 'plan'
-                  : look === 'new' && tab === item.id && item.id === 'home'
-                    ? 'navHomeSolid'
-                    : item.icon
-              }
-              size={oldChrome ? 22 : 23}
-            />
+            <Icon name={item.icon} size={22} />
             {t(item.label)}
           </button>
         ))}

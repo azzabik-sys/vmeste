@@ -218,7 +218,7 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
                 aria-label={t('orderOf', { name: label })}
                 onPointerDown={(event) => startDrag(event, row.id)}
               >
-                <Icon name="grip" size={16} />
+                <Icon name="grip" size={20} />
               </button>
               <button
                 className="mark-btn"
@@ -310,7 +310,7 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
       ref={ghostRef}
       style={{ width: pointRef.current.width || undefined, height: pointRef.current.height || undefined }}
     >
-      <Icon name="grip" size={16} />
+      <Icon name="grip" size={20} />
       <CategoryMark icon={liftedCategory.icon} size={32} />
       <span>{liftedLabel}</span>
       <strong>{formatAmount(liftedCategory.plannedAmount, snap.household.currency)}</strong>

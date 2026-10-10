@@ -2,8 +2,7 @@ export type CategoryKind = 'fixed' | 'pace'
 export type MemberRole = 'owner' | 'member'
 export type AppMode = 'local' | 'remote'
 
-export const CURRENCY_CODES = ['RUB', 'USD', 'EUR', 'KZT', 'PHP'] as const
-export type CurrencyCode = (typeof CURRENCY_CODES)[number]
+export type CurrencyCode = string
 
 export const CATEGORY_ICONS = ['food', 'car', 'home', 'bill', 'shop', 'game', 'card', 'heart', 'coffee'] as const
 export type CategoryIcon = (typeof CATEGORY_ICONS)[number]

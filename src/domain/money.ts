@@ -1,19 +1,39 @@
-import { CURRENCY_CODES, type CurrencyCode } from '../data/types'
 import { formatLocale } from './formatLocale'
 
-const CURRENCY_META: Record<CurrencyCode, { symbol: string; label: string }> = {
-  RUB: { symbol: '₽', label: 'RUB (₽)' },
-  USD: { symbol: '$', label: 'USD ($)' },
-  EUR: { symbol: '€', label: 'EUR (€)' },
-  KZT: { symbol: '₸', label: 'KZT (₸)' },
-  PHP: { symbol: '₱', label: 'PHP (₱)' },
+const CURRENCY_CODES: readonly string[] =
+  typeof Intl.supportedValuesOf === 'function'
+    ? Intl.supportedValuesOf('currency')
+    : ['EUR', 'GBP', 'KZT', 'PHP', 'RUB', 'USD']
+
+const CURRENCY_SET = new Set(CURRENCY_CODES)
+
+export function isCurrency(code: string) {
+  return CURRENCY_SET.has(code)
 }
 
-export const CURRENCIES = CURRENCY_CODES.map((code) => ({ code, ...CURRENCY_META[code] }))
+function currencySymbol(code: string) {
+  try {
+    const part = new Intl.NumberFormat('en', {
+      style: 'currency',
+      currency: code,
+      currencyDisplay: 'narrowSymbol',
+    })
+      .formatToParts(0)
+      .find((item) => item.type === 'currency')
+    return part?.value || code
+  } catch {
+    return code
+  }
+}
+
+export const CURRENCIES = [...CURRENCY_CODES].sort().map((code) => {
+  const symbol = currencySymbol(code)
+  return { code, symbol, label: symbol === code ? code : `${code} (${symbol})` }
+})
 
 export function currencyMeta(code: string) {
-  if ((CURRENCY_CODES as readonly string[]).includes(code)) return CURRENCY_META[code as CurrencyCode]
-  return CURRENCY_META.RUB
+  const known = isCurrency(code) ? code : 'RUB'
+  return CURRENCIES.find((item) => item.code === known) ?? { code: 'RUB', symbol: '₽', label: 'RUB (₽)' }
 }
 
 /** Рубли с копейками, без двоичного хвоста. */

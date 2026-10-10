@@ -138,14 +138,76 @@ const PATHS: Record<string, ReactNode> = {
     </>
   ),
   check: <path d="m5 12.5 4.2 4.2L19 7.5" />,
+  copy: (
+    <>
+      <rect x="8" y="8" width="11" height="12" rx="2" />
+      <path d="M6 15V6.5A1.5 1.5 0 0 1 7.5 5H15" />
+    </>
+  ),
+  wallet: (
+    <>
+      <rect x="3" y="6.5" width="18" height="12" rx="2" />
+      <path d="M3 10.5h18" />
+      <circle cx="16" cy="14.2" r="1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="8" r="2.3" />
+      <circle cx="16" cy="9.2" r="1.8" />
+      <path d="M4.2 18.5c.7-2.7 2.6-4.2 4.8-4.2s4.1 1.5 4.8 4.2" />
+      <path d="M14 14.8c1.5-.4 2.8.2 3.6 1.4.7.9 1 2 1.2 2.8" />
+    </>
+  ),
+  layers: (
+    <>
+      <path d="m12 3.5 8.5 4.5L12 12.5 3.5 8z" />
+      <path d="m3.5 12 8.5 4.5L20.5 12" />
+      <path d="m3.5 16 8.5 4.5L20.5 16" />
+    </>
+  ),
+  coin: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 8v8" />
+      <path d="M14.8 9.6c-.4-.7-1.2-1.1-2.3-1.1-1.6 0-2.6.8-2.6 1.9 0 1.2.9 1.8 2.7 2.1 1.7.3 2.6.9 2.6 2.1 0 1.2-1.1 2-2.7 2-1.2 0-2.1-.4-2.5-1.1" />
+    </>
+  ),
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M4 12h16" />
+      <path d="M12 4c2.2 2.3 3.3 4.9 3.3 8s-1.1 5.7-3.3 8c-2.2-2.3-3.3-4.9-3.3-8s1.1-5.7 3.3-8z" />
+    </>
+  ),
+  bell: (
+    <>
+      <path d="M6 16V11a6 6 0 0 1 12 0v5l1.4 2H4.6z" />
+      <path d="M10 19.2a2 2 0 0 0 4 0" />
+    </>
+  ),
+  help: (
+    <>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M9.4 9.6a2.6 2.6 0 0 1 4.7 1.5c0 1.7-2.1 2.1-2.1 3.4" />
+      <circle cx="12" cy="16.7" r=".7" fill="currentColor" stroke="none" />
+    </>
+  ),
+  shield: <path d="M12 3.5 19 6.4v5.3c0 4.1-2.8 6.7-7 8.8-4.2-2.1-7-4.7-7-8.8V6.4z" />,
+  link: (
+    <>
+      <path d="M10 13.2a3.6 3.6 0 0 0 5.4.4l1.8-1.8a3.6 3.6 0 0 0-5.1-5.1L10.6 8" />
+      <path d="M14 10.8a3.6 3.6 0 0 0-5.4-.4l-1.8 1.8a3.6 3.6 0 0 0 5.1 5.1L13.4 16" />
+    </>
+  ),
   grip: (
     <>
-      <circle cx="9" cy="7" r="1.15" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="7" r="1.15" fill="currentColor" stroke="none" />
-      <circle cx="9" cy="12" r="1.15" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="12" r="1.15" fill="currentColor" stroke="none" />
-      <circle cx="9" cy="17" r="1.15" fill="currentColor" stroke="none" />
-      <circle cx="15" cy="17" r="1.15" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="7" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="7" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="12" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="12" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="17" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="17" r="1.35" fill="currentColor" stroke="none" />
     </>
   ),
 }
