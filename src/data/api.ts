@@ -8,11 +8,14 @@ import type {
   Snapshot,
 } from './types'
 
+export type SignInProvider = 'apple' | 'google'
+
 export interface BudgetApi {
   readonly mode: AppMode
   load(): Promise<Snapshot>
   subscribe(onChange: () => void): () => void
   signIn(email: string, password: string): Promise<void>
+  signInWithProvider(provider: SignInProvider): Promise<void>
   signUp(email: string, password: string): Promise<void>
   requestPasswordReset(email: string): Promise<void>
   confirmPasswordReset(email: string, code: string, password: string): Promise<void>

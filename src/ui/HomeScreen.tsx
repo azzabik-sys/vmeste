@@ -186,7 +186,6 @@ export function HomeScreen({
         return (
           <section className="cat-group" key={kind}>
             <h2>{t(kind === 'pace' ? 'dailyTitle' : 'regularTitle')}</h2>
-            {oldBody ? <p className="kind-hint">{t(kind === 'pace' ? 'dailyHint' : 'regularHint')}</p> : null}
             <ul className="cat-list">
               {rows.map((row) => {
                 const tone = spendTone({

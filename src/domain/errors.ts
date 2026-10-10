@@ -24,6 +24,7 @@ const KNOWN: Record<string, TextKey> = {
   'Бюджет ещё не создан': 'errNotCreated',
   'Не получилось': 'errGeneric',
   'Общий вход включается после подключения Supabase.': 'errLocalSignIn',
+  'Этот вход ещё не подключён. Пока войдите почтой.': 'errProvider',
   'Новый пароль включается на общем сайте.': 'errLocalPassword',
   'Удаление аккаунта включается на общем сайте.': 'errLocalDelete',
   'Бюджет на этом телефоне уже есть.': 'errPhoneBudget',
@@ -34,6 +35,7 @@ function match(message: string): TextKey | null {
   if (KNOWN[message]) return KNOWN[message]
   if (/invalid email/i.test(message)) return 'errNotEmail'
   if (/invalid login credentials/i.test(message)) return 'errBadLogin'
+  if (/provider is not enabled|unsupported provider/i.test(message)) return 'errProvider'
   if (/already registered|already exists/i.test(message)) return 'errExists'
   if (/password/i.test(message) && /at least|short|weak/i.test(message)) return 'errShortPassword'
   if (/email not confirmed/i.test(message)) return 'errUnconfirmed'

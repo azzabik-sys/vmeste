@@ -262,6 +262,33 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       })
       fail(error)
     },
+    async signInWithProvider(provider) {
+      const redirectTo = new URL(import.meta.env.BASE_URL || '/', window.location.origin).href
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo, skipBrowserRedirect: true },
+      })
+      fail(error)
+      if (!data.url) throw new Error('Этот вход ещё не подключён. Пока войдите почтой.')
+      // Выключенный провайдер отвечает 400 только после перехода. Проверяем заранее, чтобы не увести человека со страницы.
+      let response: Response
+      try {
+        response = await fetch(data.url, { method: 'GET', redirect: 'manual' })
+      } catch {
+        window.location.assign(data.url)
+        return
+      }
+      if (response.type === 'opaqueredirect' || (response.status >= 300 && response.status < 400)) {
+        window.location.assign(data.url)
+        return
+      }
+      const body = await response.text()
+      if (/provider is not enabled|unsupported provider/i.test(body)) {
+        throw new Error('Этот вход ещё не подключён. Пока войдите почтой.')
+      }
+      if (!response.ok) throw new Error('Не получилось')
+      window.location.assign(data.url)
+    },
     async signUp(email, password) {
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),

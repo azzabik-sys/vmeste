@@ -4,7 +4,6 @@ import { currencyMeta, formatAmount } from '../domain/money'
 import { useBudget } from './budget'
 import { categoryTitle, useI18n } from './i18n'
 import { CategoryMark, Icon } from './icons'
-import { useLook } from './look'
 import { AmountField } from './widgets'
 
 type Row = { id: string; kind: CategoryKind }
@@ -44,7 +43,6 @@ function sameRows(left: Row[], right: Row[]) {
 export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => void; embedded?: boolean }) {
   const { snap, updateCategory, deleteCategory, addCategory, reorderCategories } = useBudget()
   const { t, lang } = useI18n()
-  const { look } = useLook()
   const signature = snap.status === 'ready' ? signatureOf(snap.categories) : ''
   const [rows, setRows] = useState<Row[]>(() => rowsFrom(signature))
   const [adding, setAdding] = useState<CategoryKind | null>(null)
@@ -199,7 +197,7 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
       }}
     >
       <h2>{t(kind === 'fixed' ? 'regularTitle' : 'dailyTitle')}</h2>
-      {look !== 'new' ? <p className="kind-hint">{t(kind === 'fixed' ? 'regularHint' : 'dailyHint')}</p> : null}
+      <p className="kind-hint">{t(kind === 'fixed' ? 'regularHint' : 'dailyHint')}</p>
       <ul className="manage-list">
         {rowsFor(kind).map((row) => {
           const category = byId.get(row.id)

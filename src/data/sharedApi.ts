@@ -72,6 +72,9 @@ export function createSharedApi(): BudgetApi {
     async signIn() {
       throw new Error('Общий вход включается после подключения Supabase.')
     },
+    async signInWithProvider() {
+      throw new Error('Общий вход включается после подключения Supabase.')
+    },
     async signUp() {
       throw new Error('Общий вход включается после подключения Supabase.')
     },

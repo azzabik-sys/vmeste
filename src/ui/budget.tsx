@@ -18,6 +18,7 @@ type BudgetContextValue = {
   error: string | null
   refresh: () => Promise<void>
   signIn: (email: string, password: string) => Promise<boolean>
+  signInWithProvider: (provider: 'apple' | 'google') => Promise<boolean>
   signUp: (email: string, password: string) => Promise<boolean>
   requestPasswordReset: (email: string) => Promise<boolean>
   confirmPasswordReset: (email: string, code: string, password: string) => Promise<boolean>
@@ -134,6 +135,7 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     error,
     refresh,
     signIn: (email, password) => run(() => apiRef.current!.signIn(email, password)),
+    signInWithProvider: (provider) => run(() => apiRef.current!.signInWithProvider(provider)),
     signUp: (email, password) => run(() => apiRef.current!.signUp(email, password)),
     requestPasswordReset: (email) => run(() => apiRef.current!.requestPasswordReset(email)),
     confirmPasswordReset: (email, code, password) =>

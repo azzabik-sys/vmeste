@@ -556,6 +556,32 @@ h1, h2, p { margin: 0; }
 
 .onboard .btn-secondary { margin-top: 8px; }
 
+.auth-providers {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.auth-providers .btn-secondary { margin-top: 0; height: 52px; }
+
+.auth-apple {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.auth-google { background: #fff; }
+
+.auth-or {
+  margin: 16px 0 12px;
+  text-align: center;
+  color: #8a867f;
+  font-size: 13px;
+}
+
+.auth-mark { width: 18px; height: 18px; flex: none; }
+
 .topbar {
   display: flex;
   align-items: center;
