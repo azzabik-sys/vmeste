@@ -104,30 +104,50 @@ export function Ring({ percent, tone }: { percent: number; tone: PaceLevel }) {
 }
 
 export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceLevel; caption: string }) {
-  const radius = 46
-  const cx = 64
-  const cy = 64
+  const radius = 56
+  const cx = 80
+  const cy = 88
+  const stroke = 14
   const length = Math.PI * radius
   const clamped = Math.max(0, Math.min(percent, 100))
   const color = tone === 'over' ? '#EF4444' : tone === 'warn' ? '#F59E0B' : '#1FA86A'
   const arc = `M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`
+  const font = '-apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif'
   return (
-    <svg className="gauge" width="128" height="88" viewBox="0 0 128 88" role="img" aria-label={`${percent}%`}>
-      <path d={arc} fill="none" stroke="#E7E9EE" strokeWidth="12" strokeLinecap="round" />
+    <svg className="gauge" width="136" height="94" viewBox="0 0 160 110" role="img" aria-label={`${percent}%`}>
+      <path d={arc} fill="none" stroke="#E7E9EE" strokeWidth={stroke} strokeLinecap="round" />
       {clamped > 0 ? (
         <path
           d={arc}
           fill="none"
           stroke={color}
-          strokeWidth="12"
+          strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${(clamped / 100) * length} ${length}`}
         />
       ) : null}
-      <text x={cx} y="54" textAnchor="middle" fill="#171714" fontSize="22" fontWeight="700" fontFamily="inherit">
+      <text
+        x={cx}
+        y={cy - 26}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="#171714"
+        fontSize="26"
+        fontWeight="700"
+        fontFamily={font}
+      >
         {percent}%
       </text>
-      <text x={cx} y="74" textAnchor="middle" fill="#8b909a" fontSize="12" fontWeight="500" fontFamily="inherit">
+      <text
+        x={cx}
+        y={cy - 8}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="#8b909a"
+        fontSize="13"
+        fontWeight="500"
+        fontFamily={font}
+      >
         {caption}
       </text>
     </svg>

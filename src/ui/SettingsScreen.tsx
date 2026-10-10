@@ -213,24 +213,31 @@ export function SettingsScreen({
         </button>
       </div>
 
-      <div className="set-card toggle-row">
-        <div>
-          <p className="toggle-title">{t('previewLook')}</p>
-          <p className="toggle-sub">{t('previewLookHint')}</p>
+      <div className="set-card look-card">
+        <p className="toggle-title">{t('previewLook')}</p>
+        <p className="toggle-sub">{t('previewLookHint')}</p>
+        <div className="look-choice" role="radiogroup" aria-label={t('previewLook')}>
+          {(
+            [
+              ['new', 'previewNew'],
+              ['classic', 'previewClassic'],
+              ['card', 'previewCard'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={look === id}
+              onClick={() => {
+                setLook(id)
+                onBack()
+              }}
+            >
+              {t(label)}
+            </button>
+          ))}
         </div>
-        <button
-          className="switch"
-          type="button"
-          role="switch"
-          aria-checked={look === 'classic'}
-          aria-label={t('previewLook')}
-          onClick={() => {
-            setLook(look === 'classic' ? 'new' : 'classic')
-            onBack()
-          }}
-        >
-          <i />
-        </button>
       </div>
 
       <button

@@ -199,7 +199,7 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
       }}
     >
       <h2>{t(kind === 'fixed' ? 'regularTitle' : 'dailyTitle')}</h2>
-      {look === 'classic' ? <p className="kind-hint">{t(kind === 'fixed' ? 'regularHint' : 'dailyHint')}</p> : null}
+      {look !== 'new' ? <p className="kind-hint">{t(kind === 'fixed' ? 'regularHint' : 'dailyHint')}</p> : null}
       <ul className="manage-list">
         {rowsFor(kind).map((row) => {
           const category = byId.get(row.id)

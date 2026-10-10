@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
 
-export type Look = 'new' | 'classic'
+export type Look = 'new' | 'classic' | 'card'
 const KEY = 'vmeste.look'
 
 export function readLook(): Look {
   try {
-    return localStorage.getItem(KEY) === 'classic' ? 'classic' : 'new'
+    const saved = localStorage.getItem(KEY)
+    return saved === 'classic' || saved === 'card' ? saved : 'new'
   } catch {
     return 'new'
   }

@@ -69,7 +69,8 @@ export function HomeScreen({
   const { snap } = useBudget()
   const { t } = useI18n()
   const { look } = useLook()
-  const classic = look === 'classic'
+  const oldBody = look !== 'new'
+  const gaugeCard = look !== 'classic'
   if (snap.status !== 'ready') return null
 
   const summary = summarizeMonth(snap.categories, snap.expenses, date)
@@ -93,7 +94,7 @@ export function HomeScreen({
                 key={member.userId}
                 type="button"
                 style={
-                  classic
+                  oldBody
                     ? { background: ['#3B82F6', '#7C6BF2', '#18A85B', '#F59E0B'][index % 4] }
                     : { background: AVATARS[index % AVATARS.length].bg, color: AVATARS[index % AVATARS.length].fg }
                 }
@@ -111,7 +112,7 @@ export function HomeScreen({
       </header>
 
       <article className="spent-card">
-        {classic ? (
+        {!gaugeCard ? (
           <>
             <div className="spent-top">
               <div>
@@ -185,7 +186,7 @@ export function HomeScreen({
         return (
           <section className="cat-group" key={kind}>
             <h2>{t(kind === 'pace' ? 'dailyTitle' : 'regularTitle')}</h2>
-            {classic ? <p className="kind-hint">{t(kind === 'pace' ? 'dailyHint' : 'regularHint')}</p> : null}
+            {oldBody ? <p className="kind-hint">{t(kind === 'pace' ? 'dailyHint' : 'regularHint')}</p> : null}
             <ul className="cat-list">
               {rows.map((row) => {
                 const tone = spendTone({
@@ -206,17 +207,17 @@ export function HomeScreen({
                       data-tone={tone}
                       onClick={() => onOpenCategory(row.category.id)}
                     >
-                      <CategoryMark icon={row.category.icon} size={classic ? 34 : 44} />
+                      <CategoryMark icon={row.category.icon} size={oldBody ? 34 : 44} />
                       <span className="cat-copy">
                         <span className="cat-name">{label}</span>
                         <span className="cat-meta">
                           {formatAmount(row.spent, currency)} / {formatAmount(row.category.plannedAmount, currency)}
                         </span>
                         {note ? <span className={`cat-note tone-${note.tone}`}>{note.text}</span> : null}
-                        {classic ? <Bar percent={row.percent} tone={tone} /> : null}
+                        {oldBody ? <Bar percent={row.percent} tone={tone} /> : null}
                       </span>
-                      <span className={`cat-side ${row.percent > 0 ? (classic ? `tone-${tone}` : '') : 'tone-zero'}`}>
-                        {classic ? (
+                      <span className={`cat-side ${row.percent > 0 ? (oldBody ? `tone-${tone}` : '') : 'tone-zero'}`}>
+                        {oldBody ? (
                           <>
                             {row.percent}%
                             <Icon name="chevron" size={16} />
@@ -228,7 +229,7 @@ export function HomeScreen({
                           </>
                         )}
                       </span>
-                      {classic ? null : <Bar percent={row.percent} tone={tone} color={accent} />}
+                      {oldBody ? null : <Bar percent={row.percent} tone={tone} color={accent} />}
                     </button>
                   </li>
                 )

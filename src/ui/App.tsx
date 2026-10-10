@@ -28,7 +28,7 @@ export function App() {
   const { snap, error, refresh } = useBudget()
   const { t } = useI18n()
   const { look } = useLook()
-  const classic = look === 'classic'
+  const oldChrome = look !== 'new'
   const [tab, setTab] = useState<Tab>('home')
   const [expenseOpen, setExpenseOpen] = useState(false)
   const [editing, setEditing] = useState<Expense | null>(null)
@@ -144,7 +144,7 @@ export function App() {
           >
             <Icon
               name={
-                classic
+                oldChrome
                   ? item.id === 'plan'
                     ? 'plan'
                     : item.icon
@@ -152,7 +152,7 @@ export function App() {
                     ? 'navHomeSolid'
                     : item.icon
               }
-              size={classic ? 22 : 23}
+              size={oldChrome ? 22 : 23}
             />
             {t(item.label)}
           </button>
