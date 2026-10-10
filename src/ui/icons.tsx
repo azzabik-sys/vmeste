@@ -77,9 +77,9 @@ const PATHS: Record<string, ReactNode> = {
   ),
   stats: (
     <>
-      <path d="M5 19V10" />
-      <path d="M12 19V5" />
-      <path d="M19 19v-7" />
+      <rect x="3.3" y="11.4" width="3.1" height="8.1" rx="1.55" strokeWidth="1.5" />
+      <rect x="10.5" y="4.2" width="3.1" height="15.3" rx="1.55" strokeWidth="1.5" />
+      <rect x="17.6" y="11.4" width="3.1" height="8.1" rx="1.55" strokeWidth="1.5" />
     </>
   ),
   gear: (

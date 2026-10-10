@@ -144,11 +144,9 @@ export function App() {
           >
             <Icon
               name={
-                oldChrome
-                  ? item.id === 'plan'
-                    ? 'plan'
-                    : item.icon
-                  : tab === item.id && item.id === 'home'
+                item.id === 'plan' && look === 'classic'
+                  ? 'plan'
+                  : look === 'new' && tab === item.id && item.id === 'home'
                     ? 'navHomeSolid'
                     : item.icon
               }
