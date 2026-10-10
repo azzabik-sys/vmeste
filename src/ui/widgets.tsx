@@ -128,11 +128,11 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
       ) : null}
       <text
         x={cx}
-        y={cy - 26}
+        y={cy - 20}
         textAnchor="middle"
         dominantBaseline="central"
         fill="#171714"
-        fontSize="26"
+        fontSize="22"
         fontWeight="700"
         fontFamily={font}
       >
@@ -140,11 +140,11 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
       </text>
       <text
         x={cx}
-        y={cy - 8}
+        y={cy - 2}
         textAnchor="middle"
         dominantBaseline="central"
         fill="#8b909a"
-        fontSize="13"
+        fontSize="12"
         fontWeight="500"
         fontFamily={font}
       >
