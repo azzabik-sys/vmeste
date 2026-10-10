@@ -142,7 +142,7 @@ export const en = {
   signInSub: 'Apple, Google, or email. The budget stays on this account.',
   continueApple: 'Continue with Apple',
   continueGoogle: 'Continue with Google',
-  orEmail: 'or with email',
+  orEmail: 'Sign in with email',
   email: 'Email',
   emailPlaceholder: 'you@email.com',
   password: 'Password',

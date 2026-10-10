@@ -65,6 +65,7 @@ export function GateScreen() {
   const { error, signIn, signInWithProvider, signUp, requestPasswordReset, confirmPasswordReset, dismissError } = useBudget()
   const { t } = useI18n()
   const [step, setStep] = useState<'login' | 'forgot' | 'code'>('login')
+  const [emailOpen, setEmailOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
@@ -114,56 +115,63 @@ export function GateScreen() {
                 <GoogleMark />
                 {t('continueGoogle')}
               </button>
+              {emailOpen ? null : (
+                <button className="btn-secondary" type="button" onClick={() => setEmailOpen(true)}>
+                  {t('orEmail')}
+                </button>
+              )}
             </div>
-            <p className="auth-or">{t('orEmail')}</p>
-          <form
-            onSubmit={(event) => {
-              event.preventDefault()
-              if (!loginOk) return
-              setPending(true)
-              void signIn(email.trim(), password).finally(() => setPending(false))
-            }}
-          >
-            <label className="field">
-              <span>{t('email')}</span>
-              <input
-                type="email"
-                inputMode="email"
-                autoComplete="username"
-                value={email}
-                placeholder={t('emailPlaceholder')}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </label>
-            <label className="field">
-              <span>{t('password')}</span>
-              <input
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                aria-label={t('password')}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </label>
-            <p className="help">{t('passwordHint')}</p>
-            <button className="btn-primary" type="submit" disabled={pending || !loginOk}>
-              {t('signIn')}
-            </button>
-            <button
-              className="btn-secondary"
-              type="button"
-              disabled={pending || !loginOk}
-              onClick={() => {
-                setPending(true)
-                void signUp(email.trim(), password).finally(() => setPending(false))
-              }}
-            >
-              {t('createLogin')}
-            </button>
-            <button className="quiet-link" type="button" onClick={() => go('forgot')}>
-              {t('forgot')}
-            </button>
-          </form>
+            {emailOpen ? (
+              <form
+                className="auth-email-form"
+                onSubmit={(event) => {
+                  event.preventDefault()
+                  if (!loginOk) return
+                  setPending(true)
+                  void signIn(email.trim(), password).finally(() => setPending(false))
+                }}
+              >
+                <label className="field">
+                  <span>{t('email')}</span>
+                  <input
+                    type="email"
+                    inputMode="email"
+                    autoComplete="username"
+                    value={email}
+                    placeholder={t('emailPlaceholder')}
+                    onChange={(event) => setEmail(event.target.value)}
+                  />
+                </label>
+                <label className="field">
+                  <span>{t('password')}</span>
+                  <input
+                    type="password"
+                    autoComplete="current-password"
+                    value={password}
+                    aria-label={t('password')}
+                    onChange={(event) => setPassword(event.target.value)}
+                  />
+                </label>
+                <p className="help">{t('passwordHint')}</p>
+                <button className="btn-primary" type="submit" disabled={pending || !loginOk}>
+                  {t('signIn')}
+                </button>
+                <button
+                  className="btn-secondary"
+                  type="button"
+                  disabled={pending || !loginOk}
+                  onClick={() => {
+                    setPending(true)
+                    void signUp(email.trim(), password).finally(() => setPending(false))
+                  }}
+                >
+                  {t('createLogin')}
+                </button>
+                <button className="quiet-link" type="button" onClick={() => go('forgot')}>
+                  {t('forgot')}
+                </button>
+              </form>
+            ) : null}
           </>
         ) : null}
         {step === 'forgot' ? (

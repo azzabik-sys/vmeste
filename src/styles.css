@@ -587,6 +587,8 @@ h1, h2, p { margin: 0; }
   font-size: 13px;
 }
 
+.auth-email-form { margin-top: 16px; }
+
 .auth-mark { width: 18px; height: 18px; flex: none; }
 
 .topbar {

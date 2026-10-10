@@ -144,7 +144,7 @@ export const ru: Catalog = {
   signInSub: 'Apple, Google или почта. Бюджет остаётся на этом аккаунте.',
   continueApple: 'Продолжить с Apple',
   continueGoogle: 'Продолжить с Google',
-  orEmail: 'или по почте',
+  orEmail: 'Войти по почте',
   email: 'Почта',
   emailPlaceholder: 'вы@почта.ru',
   password: 'Пароль',

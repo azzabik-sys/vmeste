@@ -144,7 +144,7 @@ export const vi: Catalog = {
   signInSub: 'Apple, Google hoặc email. Ngân sách nằm trên tài khoản này.',
   continueApple: 'Tiếp tục với Apple',
   continueGoogle: 'Tiếp tục với Google',
-  orEmail: 'hoặc bằng email',
+  orEmail: 'Đăng nhập bằng email',
   email: 'Email',
   emailPlaceholder: 'ban@email.com',
   password: 'Mật khẩu',
