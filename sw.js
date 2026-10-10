@@ -1,4 +1,4 @@
-const CACHE = 'vmeste-v1'
+const CACHE = 'vmeste-v2'
 
 const OFFLINE = {
   ar: 'لا توجد شبكة',
