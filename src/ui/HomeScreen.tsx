@@ -1,4 +1,4 @@
-import { formatDayCount } from '../domain/dates'
+import { daysUntilMonthEnd, formatDayCount, monthOf } from '../domain/dates'
 import type { PaceJudgement, PaceLevel } from '../domain/pace'
 import { spendTone } from '../domain/pace'
 import { formatAmount, formatPercent } from '../domain/money'
@@ -58,6 +58,10 @@ export function HomeScreen({
   const totalPercent = formatPercent(summary.spentTotal, budget)
   const totalTone: PaceLevel = totalPercent >= 100 ? 'over' : totalPercent >= 80 ? 'warn' : 'ok'
   const currency = snap.household.currency
+  const leftCents = Math.round(budget * 100) - Math.round(summary.spentTotal * 100)
+  const over = leftCents < 0
+  const viewingNow = monthOf(monthStart).start === monthOf(today).start
+  const daysLeft = viewingNow ? daysUntilMonthEnd(today) : null
 
   return (
     <section className="screen">
@@ -85,11 +89,21 @@ export function HomeScreen({
 
       <article className="spent-card">
         <div>
-          <p className="spent-kicker">{t('spent')}</p>
-          <p className="spent-value" data-testid="spent">
-            {formatAmount(summary.spentTotal, currency)}
+          <p className="spent-kicker">{over ? t('overBudget') : t('budgetLeft')}</p>
+          <p className={`spent-value${over ? ' tone-over' : ''}`} data-testid="left">
+            {formatAmount(Math.abs(leftCents) / 100, currency)}
           </p>
-          <p className="spent-of">{t('spentOf', { amount: formatAmount(budget, currency) })}</p>
+          <p className="spent-of">
+            {t('spentOf', { amount: formatAmount(budget, currency) })}
+            {daysLeft === null ? null : (
+              <span className="spent-days">
+                {daysLeft === 0 ? t('monthLastDay') : t('monthDaysLeft', { days: formatDayCount(daysLeft) })}
+              </span>
+            )}
+          </p>
+          <p className="spent-of" data-testid="spent">
+            {t('spentAmount', { amount: formatAmount(summary.spentTotal, currency) })}
+          </p>
         </div>
         <Ring percent={totalPercent} tone={totalTone} />
       </article>

@@ -656,6 +656,10 @@ h1, h2, p { margin: 0; }
 
 .spent-kicker, .spent-of { color: #77736d; font-size: 13px; }
 
+.spent-of { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+
+.spent-days { color: #171714; font-weight: 600; }
+
 .spent-value {
   font-size: 32px;
   line-height: 1.1;

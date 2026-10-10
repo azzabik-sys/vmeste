@@ -139,6 +139,12 @@ export function recentMonths(today: string, count = 8): string[] {
   return months
 }
 
+/** Дней после этой даты до конца её месяца. В последний день месяца — 0. */
+export function daysUntilMonthEnd(iso: string): number {
+  const month = monthOf(iso)
+  return Math.max(0, month.days - month.day)
+}
+
 /** Для прошлого месяца темп считается на последний день, для текущего — на сегодня. */
 export function paceDateForMonth(monthStart: string, today: string): string {
   const selected = monthOf(monthStart)

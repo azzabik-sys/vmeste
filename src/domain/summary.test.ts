@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { deviceTimeZone, formatTime, monthOf, todayISO } from './dates'
+import { daysUntilMonthEnd, deviceTimeZone, formatTime, monthOf, todayISO } from './dates'
 import { parseAmount, parsePlan, sumRub } from './money'
 import { judgePace, spendTone } from './pace'
 import { summarizeMonth } from './summary'
@@ -151,6 +151,9 @@ describe('dates and money', () => {
     expect(monthOf('2026-10-15').days).toBe(31)
     expect(monthOf('2028-02-10').days).toBe(29)
     expect(monthOf('2026-02-10').days).toBe(28)
+    expect(daysUntilMonthEnd('2026-10-10')).toBe(21)
+    expect(daysUntilMonthEnd('2026-10-31')).toBe(0)
+    expect(daysUntilMonthEnd('2028-02-01')).toBe(28)
   })
 
   it('сегодня и часы истории идут по часовому поясу телефона', () => {
