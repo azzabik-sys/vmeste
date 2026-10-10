@@ -74,12 +74,20 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
   }
 
   function sectionKind(clientY: number): CategoryKind {
-    const fixed = sectionRefs.current.get('fixed')?.getBoundingClientRect()
-    const pace = sectionRefs.current.get('pace')?.getBoundingClientRect()
-    if (fixed && clientY <= fixed.bottom) return 'fixed'
-    if (pace && clientY >= pace.top) return 'pace'
-    if (fixed && pace) return clientY < (fixed.bottom + pace.top) / 2 ? 'fixed' : 'pace'
-    return 'pace'
+    const boxes = (['pace', 'fixed'] as const)
+      .flatMap((kind) => {
+        const rect = sectionRefs.current.get(kind)?.getBoundingClientRect()
+        return rect ? [{ kind, rect }] : []
+      })
+      .sort((a, b) => a.rect.top - b.rect.top)
+    if (boxes.length === 0) return 'pace'
+    for (let index = 0; index < boxes.length; index += 1) {
+      const next = boxes[index + 1]
+      if (!next) return boxes[index].kind
+      const split = (boxes[index].rect.bottom + next.rect.top) / 2
+      if (clientY < split) return boxes[index].kind
+    }
+    return boxes[boxes.length - 1].kind
   }
 
   function relocate(clientY: number) {
@@ -179,7 +187,7 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
     return rows.filter((row) => row.kind === kind)
   }
 
-  const groups = (['fixed', 'pace'] as const).map((kind) => (
+  const groups = (['pace', 'fixed'] as const).map((kind) => (
     <section
       className={`kind-block${lifted && rows.find((row) => row.id === lifted)?.kind === kind ? ' is-target' : ''}`}
       key={kind}

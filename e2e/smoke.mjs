@@ -145,9 +145,9 @@ const planOrder = await page.locator('section.screen').innerText()
 if (
   !planOrder.includes('Регулярные платежи') ||
   !planOrder.includes('Повседневные расходы') ||
-  planOrder.indexOf('Регулярные платежи') > planOrder.indexOf('Повседневные расходы')
+  planOrder.indexOf('Повседневные расходы') > planOrder.indexOf('Регулярные платежи')
 ) {
-  throw new Error('В плане регулярные платежи должны быть сверху')
+  throw new Error('В плане повседневные расходы должны быть сверху')
 }
 await page.getByText('Общий бюджет').waitFor()
 await page.getByLabel('Лимит для Еда').waitFor()
