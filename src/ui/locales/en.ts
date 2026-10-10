@@ -49,7 +49,7 @@ export const en = {
   language: 'Language',
   spent: 'Spent',
   spentOf: 'of {amount}',
-  budgetLeft: 'Remaining',
+  budgetLeft: 'Left for this month',
   spentAmount: 'Spent {amount}',
   overBudget: 'Over budget',
   monthLastDay: 'Last day',

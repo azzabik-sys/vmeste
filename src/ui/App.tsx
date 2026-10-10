@@ -19,7 +19,7 @@ type Tab = 'home' | 'history' | 'plan' | 'settings'
 const TABS: { id: Tab; label: Tab; icon: string }[] = [
   { id: 'home', label: 'home', icon: 'navHome' },
   { id: 'history', label: 'history', icon: 'history' },
-  { id: 'plan', label: 'plan', icon: 'plan' },
+  { id: 'plan', label: 'plan', icon: 'stats' },
   { id: 'settings', label: 'settings', icon: 'gear' },
 ]
 
@@ -139,7 +139,7 @@ export function App() {
             aria-current={tab === item.id ? 'page' : undefined}
             onClick={() => setTab(item.id)}
           >
-            <Icon name={item.icon} size={22} />
+            <Icon name={tab === item.id && item.id === 'home' ? 'navHomeSolid' : item.icon} size={23} />
             {t(item.label)}
           </button>
         ))}

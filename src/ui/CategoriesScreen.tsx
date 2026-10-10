@@ -197,7 +197,6 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
       }}
     >
       <h2>{t(kind === 'fixed' ? 'regularTitle' : 'dailyTitle')}</h2>
-      <p className="kind-hint">{t(kind === 'fixed' ? 'regularHint' : 'dailyHint')}</p>
       <ul className="manage-list">
         {rowsFor(kind).map((row) => {
           const category = byId.get(row.id)

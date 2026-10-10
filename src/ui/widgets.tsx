@@ -54,50 +54,41 @@ export function AmountField({
   )
 }
 
-export function Bar({ percent, tone }: { percent: number; tone: PaceLevel }) {
+export function Bar({ percent, tone, color }: { percent: number; tone: PaceLevel; color?: string }) {
   const width = Math.max(0, Math.min(percent, 100))
   return (
-    <span className="bar" data-tone={tone}>
-      <span style={{ width: `${width}%` }} />
+    <span className="bar" data-tone={color ? undefined : tone}>
+      <span style={{ width: `${width}%`, background: color }} />
     </span>
   )
 }
 
-export function Ring({ percent, tone }: { percent: number; tone: PaceLevel }) {
-  const size = 72
-  const stroke = 7
-  const radius = (size - stroke) / 2
-  const length = 2 * Math.PI * radius
+export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceLevel; caption: string }) {
+  const radius = 46
+  const cx = 64
+  const cy = 64
+  const length = Math.PI * radius
   const clamped = Math.max(0, Math.min(percent, 100))
-  const dash = (clamped / 100) * length
-  const color = tone === 'over' ? '#EF4444' : tone === 'warn' ? '#F59E0B' : '#18A85B'
+  const color = tone === 'over' ? '#EF4444' : tone === 'warn' ? '#F59E0B' : '#1FA86A'
+  const arc = `M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`
   return (
-    <svg className="ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
-      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#E9E9E7" strokeWidth={stroke} />
+    <svg className="gauge" width="128" height="88" viewBox="0 0 128 88" role="img" aria-label={`${percent}%`}>
+      <path d={arc} fill="none" stroke="#E7E9EE" strokeWidth="12" strokeLinecap="round" />
       {clamped > 0 ? (
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
+        <path
+          d={arc}
           fill="none"
           stroke={color}
-          strokeWidth={stroke}
+          strokeWidth="12"
           strokeLinecap="round"
-          strokeDasharray={`${dash} ${length - dash}`}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          strokeDasharray={`${(clamped / 100) * length} ${length}`}
         />
       ) : null}
-      <text
-        x="50%"
-        y="52%"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="#171714"
-        fontSize="13"
-        fontWeight="700"
-        fontFamily="-apple-system, BlinkMacSystemFont, SF Pro Text, Inter, sans-serif"
-      >
+      <text x={cx} y="54" textAnchor="middle" fill="#171714" fontSize="22" fontWeight="700" fontFamily="inherit">
         {percent}%
+      </text>
+      <text x={cx} y="74" textAnchor="middle" fill="#8b909a" fontSize="12" fontWeight="500" fontFamily="inherit">
+        {caption}
       </text>
     </svg>
   )

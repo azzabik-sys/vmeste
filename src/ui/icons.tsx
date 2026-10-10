@@ -3,10 +3,13 @@ import type { ReactNode } from 'react'
 const PATHS: Record<string, ReactNode> = {
   food: (
     <>
-      <path d="M8 3v8" />
-      <path d="M8 3c-2.2 0-3.2 2-3.2 4.2S6 11 8 11" />
-      <path d="M8 11v10" />
-      <path d="M16 3v18" />
+      <path d="M5.2 3.2v3.4" />
+      <path d="M7.2 3.2v3.4" />
+      <path d="M9.2 3.2v3.4" />
+      <path d="M5.2 6.4c0 1.5.9 2.4 2 2.4s2-.9 2-2.4" />
+      <path d="M7.2 8.8V21" />
+      <path d="M16.4 3.2c1.7 1.6 2.3 3.2 2.3 5 0 1.6-1 2.6-2.3 2.6s-2.3-1-2.3-2.6c0-1.8.6-3.4 2.3-5z" />
+      <path d="M16.4 10.8V21" />
     </>
   ),
   car: (
@@ -65,6 +68,7 @@ const PATHS: Record<string, ReactNode> = {
       <path d="M7 10.2V20h10v-9.8" />
     </>
   ),
+  navHomeSolid: <path fill="currentColor" stroke="none" d="M12 3.4 3.2 11.2h2.3V20.5h5v-5.4h2.9v5.4h5V11.2h2.4L12 3.4z" />,
   history: (
     <>
       <circle cx="12" cy="12" r="8" />
@@ -170,14 +174,18 @@ const LOOK: Record<string, { bg: string; fg: string }> = {
   home: { bg: '#FDECEC', fg: '#EF4444' },
   bill: { bg: '#E8F6F4', fg: '#0F9F8A' },
   shop: { bg: '#F4E9FB', fg: '#A855F7' },
-  game: { bg: '#EEEFFE', fg: '#6366F1' },
+  game: { bg: '#FFF3E4', fg: '#F59E0B' },
   card: { bg: '#FFF3E4', fg: '#F59E0B' },
   heart: { bg: '#FDE8EF', fg: '#EC4899' },
   coffee: { bg: '#F8F1E6', fg: '#C2762A' },
 }
 
+export function categoryLook(icon: string) {
+  return LOOK[icon] ?? LOOK.shop
+}
+
 export function CategoryMark({ icon, size = 34 }: { icon: string; size?: number }) {
-  const look = LOOK[icon] ?? LOOK.shop
+  const look = categoryLook(icon)
   return (
     <span className="mark" style={{ width: size, height: size, background: look.bg, color: look.fg }}>
       <Icon name={icon} size={Math.round(size * 0.56)} />

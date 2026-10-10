@@ -111,6 +111,12 @@ export function formatDayCount(count: number, locale = formatLocale()): string {
   return new Intl.NumberFormat(locale, { style: 'unit', unit: 'day', unitDisplay: 'long' }).format(n)
 }
 
+export function monthSpan(iso: string): string {
+  const month = monthOf(iso)
+  const format = new Intl.DateTimeFormat(formatLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' })
+  return `${format.format(utcDate(month.start))} – ${format.format(utcDate(month.end))}`
+}
+
 export function shortDate(iso: string): string {
   return new Intl.DateTimeFormat(formatLocale(), {
     day: 'numeric',
