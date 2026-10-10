@@ -10,6 +10,7 @@ import type {
   ReadySnapshot,
   Snapshot,
 } from '../data/types'
+import { writeActiveHousehold } from '../data/activeHousehold'
 import { humanError } from '../domain/errors'
 
 type BudgetContextValue = {
@@ -27,6 +28,8 @@ type BudgetContextValue = {
   joinHousehold: (code: string, displayName: string) => Promise<boolean>
   leaveHousehold: () => Promise<boolean>
   deleteBudget: () => Promise<boolean>
+  removeMember: (userId: string) => Promise<boolean>
+  switchHousehold: (id: string) => Promise<void>
   updateHouseholdName: (name: string) => Promise<boolean>
   updateHouseholdSettings: (patch: HouseholdSettingsPatch) => Promise<boolean>
   updateDisplayName: (name: string) => Promise<boolean>
@@ -35,7 +38,7 @@ type BudgetContextValue = {
     id: string,
     patch: { name?: string; plannedAmount?: number; kind?: CategoryKind; icon?: string },
   ) => Promise<boolean>
-  reorderCategories: (ids: string[]) => Promise<boolean>
+  reorderCategories: (ids: string[], kinds?: CategoryKind[]) => Promise<boolean>
   deleteCategory: (id: string) => Promise<boolean>
   saveExpense: (expense: Expense) => Promise<boolean>
   removeExpense: (id: string) => Promise<boolean>
@@ -140,14 +143,20 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
     dismissError: () => setError(null),
     createHousehold: (input) => run(() => apiRef.current!.createHousehold(input)),
     joinHousehold: (code, displayName) => run(() => apiRef.current!.joinHousehold(code, displayName)),
-    leaveHousehold: () => run(() => apiRef.current!.leaveHousehold()),
-    deleteBudget: () => run(() => apiRef.current!.deleteBudget()),
+    leaveHousehold: () => run(() => apiRef.current!.leaveHousehold(ready().household.id)),
+    deleteBudget: () => run(() => apiRef.current!.deleteBudget(ready().household.id)),
+    removeMember: (userId) => run(() => apiRef.current!.removeMember(ready().household.id, userId)),
+    switchHousehold: async (id) => {
+      writeActiveHousehold(id)
+      await refresh()
+    },
     updateHouseholdName: (name) => run(() => apiRef.current!.updateHouseholdName(ready().household.id, name)),
     updateHouseholdSettings: (patch) => run(() => apiRef.current!.updateHouseholdSettings(ready().household.id, patch)),
     updateDisplayName: (name) => run(() => apiRef.current!.updateDisplayName(name)),
     addCategory: (input) => run(() => apiRef.current!.addCategory(ready().household.id, input)),
     updateCategory: (id, patch) => run(() => apiRef.current!.updateCategory(id, patch)),
-    reorderCategories: (ids) => run(() => apiRef.current!.reorderCategories(ready().household.id, ids)),
+    reorderCategories: (ids, kinds) =>
+      run(() => apiRef.current!.reorderCategories(ready().household.id, ids, kinds)),
     deleteCategory: (id) => run(() => apiRef.current!.deleteCategory(id)),
     saveExpense: (expense) => run(() => apiRef.current!.saveExpense(expense)),
     removeExpense: (id) => run(() => apiRef.current!.removeExpense(id)),

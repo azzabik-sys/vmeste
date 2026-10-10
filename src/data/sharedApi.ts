@@ -23,6 +23,13 @@ function ready(db: HouseDb, userId: string): Snapshot {
     email: null,
     userId,
     household: db.household,
+    households: [
+      {
+        id: db.household.id,
+        name: db.household.name,
+        role: db.members.find((member) => member.userId === userId)?.role ?? 'member',
+      },
+    ],
     members: db.members,
     categories: db.categories,
     expenses: db.expenses,
@@ -95,6 +102,9 @@ export function createSharedApi(): BudgetApi {
     async deleteBudget() {
       await request('DELETE')
     },
+    async removeMember(_householdId, memberId) {
+      await request('POST', { op: 'removeMember', userId: readWho().id, memberId })
+    },
     async updateHouseholdName(householdId, name) {
       await request('POST', { op: 'updateSettings', userId: readWho().id, householdId, patch: { name } })
     },
@@ -112,8 +122,8 @@ export function createSharedApi(): BudgetApi {
     async updateCategory(id, patch) {
       await request('POST', { op: 'updateCategory', userId: readWho().id, id, patch })
     },
-    async reorderCategories(householdId, ids) {
-      await request('POST', { op: 'reorder', userId: readWho().id, householdId, ids })
+    async reorderCategories(householdId, ids, kinds) {
+      await request('POST', { op: 'reorder', userId: readWho().id, householdId, ids, kinds })
     },
     async deleteCategory(id) {
       await request('POST', { op: 'deleteCategory', userId: readWho().id, id })

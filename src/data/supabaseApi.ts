@@ -1,6 +1,7 @@
 import { createClient, type RealtimeChannel } from '@supabase/supabase-js'
 import { iconForName } from '../domain/defaults'
 import { createId } from '../domain/id'
+import { clearActiveHousehold, readActiveHousehold, writeActiveHousehold } from './activeHousehold'
 import type { BudgetApi } from './api'
 import { clearJoinCode, readJoinCode } from './joinCode'
 import type {
@@ -9,6 +10,7 @@ import type {
   CurrencyCode,
   Expense,
   Household,
+  HouseholdBrief,
   Member,
   MemberRole,
   Snapshot,
@@ -157,11 +159,12 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       .from('household_members')
       .select('household_id, user_id, role, display_name')
       .eq('user_id', userId)
-      .maybeSingle()
     fail(membership.error)
+    const mine = (membership.data ?? []) as MemberRow[]
 
-    if (!membership.data) {
+    if (mine.length === 0) {
       unwatch()
+      clearActiveHousehold()
       return {
         status: 'needs_household',
         mode: 'remote',
@@ -172,7 +175,21 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       }
     }
 
-    const householdId = membership.data.household_id
+    const ids = mine.map((row) => row.household_id)
+    const names = await supabase.from('households').select('id, name').in('id', ids)
+    fail(names.error)
+    const nameById = new Map(((names.data ?? []) as { id: string; name: string }[]).map((row) => [row.id, row.name]))
+    const households: HouseholdBrief[] = mine
+      .map((row) => ({
+        id: row.household_id,
+        name: nameById.get(row.household_id) || '',
+        role: row.role,
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id))
+    const wanted = readActiveHousehold()
+    const householdId = wanted && ids.includes(wanted) ? wanted : ids[0]
+    writeActiveHousehold(householdId)
+
     const [householdRes, membersRes, categoriesRes, expensesRes] = await Promise.all([
       supabase
         .from('households')
@@ -216,6 +233,7 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       email,
       userId,
       household,
+      households,
       members: ((membersRes.data ?? []) as MemberRow[]).map(mapMember),
       categories: ((categoriesRes.data ?? []) as CategoryRow[]).map(mapCategory),
       expenses: ((expensesRes.data ?? []) as ExpenseRow[]).map(mapExpense),
@@ -287,25 +305,15 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
     async createHousehold(input) {
       const name = input.name.trim().slice(0, 60) || 'Наш бюджет'
       const displayName = input.displayName.trim().slice(0, 40) || 'Я'
-      const { error } = await supabase.rpc('create_household', {
+      const { data, error } = await supabase.rpc('create_household', {
         p_name: name,
         p_display_name: displayName,
       })
       fail(error)
       clearJoinCode()
-
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
-      fail(sessionError)
-      const userId = sessionData.session?.user.id
-      if (!userId) throw new Error('Нужно войти')
-      const membership = await supabase
-        .from('household_members')
-        .select('household_id')
-        .eq('user_id', userId)
-        .single()
-      fail(membership.error)
-      const householdId = membership.data?.household_id
-      if (!householdId) throw new Error('Бюджет ещё не открыт')
+      if (typeof data !== 'string' || data.length < 8) throw new Error('Бюджет ещё не открыт')
+      const householdId = data
+      writeActiveHousehold(householdId)
 
       const { error: updateError } = await supabase
         .from('households')
@@ -340,22 +348,29 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       }
     },
     async joinHousehold(code, displayName) {
-      const { error } = await supabase.rpc('join_household', {
+      const { data, error } = await supabase.rpc('join_household', {
         p_code: code.trim().toUpperCase(),
         p_display_name: displayName.trim(),
       })
       fail(error)
       clearJoinCode()
+      if (typeof data === 'string' && data.length >= 8) writeActiveHousehold(data)
     },
-    async leaveHousehold() {
-      const { error } = await supabase.rpc('leave_household')
+    async leaveHousehold(householdId) {
+      const { error } = await supabase.rpc('leave_household', { p_hid: householdId })
       fail(error)
+      if (readActiveHousehold() === householdId) clearActiveHousehold()
       unwatch()
     },
-    async deleteBudget() {
-      const { error } = await supabase.rpc('leave_household')
+    async deleteBudget(householdId) {
+      const { error } = await supabase.rpc('leave_household', { p_hid: householdId })
       fail(error)
+      if (readActiveHousehold() === householdId) clearActiveHousehold()
       unwatch()
+    },
+    async removeMember(householdId, userId) {
+      const { error } = await supabase.rpc('remove_member', { p_hid: householdId, p_user: userId })
+      fail(error)
     },
     async updateHouseholdName(householdId, name) {
       const trimmed = name.trim()
@@ -388,10 +403,10 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       fail(sessionError)
       const userId = sessionData.session?.user.id
       if (!userId) throw new Error('Нужно войти')
-      const { error } = await supabase
-        .from('household_members')
-        .update({ display_name: trimmed.slice(0, 40) })
-        .eq('user_id', userId)
+      const active = readActiveHousehold()
+      let update = supabase.from('household_members').update({ display_name: trimmed.slice(0, 40) }).eq('user_id', userId)
+      if (active) update = update.eq('household_id', active)
+      const { error } = await update
       fail(error)
     },
     async addCategory(householdId, input) {
@@ -429,11 +444,13 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       const { error } = await supabase.from('categories').update(next).eq('id', id)
       fail(error)
     },
-    async reorderCategories(householdId, ids) {
+    async reorderCategories(householdId, ids, kinds) {
       const results = await Promise.all(
-        ids.map((id, index) =>
-          supabase.from('categories').update({ sort_order: index }).eq('id', id).eq('household_id', householdId),
-        ),
+        ids.map((id, index) => {
+          const next: { sort_order: number; kind?: CategoryKind } = { sort_order: index }
+          if (kinds?.[index] === 'fixed' || kinds?.[index] === 'pace') next.kind = kinds[index]
+          return supabase.from('categories').update(next).eq('id', id).eq('household_id', householdId)
+        }),
       )
       for (const result of results) fail(result.error)
     },

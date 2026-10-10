@@ -36,7 +36,8 @@ export type HouseOp =
   | { op: 'updateDisplayName'; userId: string; name: string }
   | { op: 'addCategory'; userId: string; householdId: string; input: NewCategory }
   | { op: 'updateCategory'; userId: string; id: string; patch: CategoryPatch }
-  | { op: 'reorder'; userId: string; householdId: string; ids: string[] }
+  | { op: 'reorder'; userId: string; householdId: string; ids: string[]; kinds?: CategoryKind[] }
+  | { op: 'removeMember'; userId: string; memberId: string }
   | { op: 'deleteCategory'; userId: string; id: string }
   | { op: 'saveExpense'; userId: string; expense: Expense }
   | { op: 'removeExpense'; userId: string; id: string }
@@ -199,13 +200,14 @@ export function updateCategory(db: HouseDb, id: string, patch: CategoryPatch) {
   if (patch.icon !== undefined) category.icon = patch.icon
 }
 
-export function reorderCategories(db: HouseDb, ids: string[]) {
+export function reorderCategories(db: HouseDb, ids: string[], kinds?: CategoryKind[]) {
   const byId = new Map(db.categories.map((category) => [category.id, category]))
   const next: Category[] = []
   ids.forEach((id, index) => {
     const category = byId.get(id)
     if (!category) return
     category.sortOrder = index
+    if (kinds?.[index] === 'fixed' || kinds?.[index] === 'pace') category.kind = kinds[index]
     next.push(category)
     byId.delete(id)
   })
@@ -214,6 +216,15 @@ export function reorderCategories(db: HouseDb, ids: string[]) {
     next.push(category)
   }
   db.categories = next
+}
+
+export function removeMember(db: HouseDb, memberId: string) {
+  if (!db.members.some((member) => member.userId === memberId)) return
+  if (db.members.length < 2) throw new Error('Не получилось')
+  db.members = db.members.filter((member) => member.userId !== memberId)
+  if (!db.members.some((member) => member.role === 'owner') && db.members[0]) {
+    db.members[0].role = 'owner'
+  }
 }
 
 export function deleteCategory(db: HouseDb, id: string) {
@@ -277,14 +288,29 @@ export function applyHouseOp(current: HouseDb | null, body: HouseOp): HouseDb {
       updateCategory(db, body.id, body.patch)
       break
     case 'reorder':
-      reorderCategories(db, body.ids)
+      reorderCategories(db, body.ids, body.kinds)
       break
     case 'deleteCategory':
       deleteCategory(db, body.id)
       break
-    case 'saveExpense':
-      saveExpense(db, { ...body.expense, createdBy: body.userId })
+    case 'removeMember':
+      removeMember(db, body.memberId)
       break
+    case 'saveExpense': {
+      const existing = db.expenses.find((item) => item.id === body.expense.id)
+      saveExpense(
+        db,
+        existing
+          ? {
+              ...body.expense,
+              createdBy: existing.createdBy,
+              createdByName: existing.createdByName,
+              createdAt: existing.createdAt,
+            }
+          : { ...body.expense, createdBy: body.userId },
+      )
+      break
+    }
     case 'removeExpense':
       removeExpense(db, body.id)
       break

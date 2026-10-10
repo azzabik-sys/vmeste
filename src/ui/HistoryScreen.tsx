@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { Expense } from '../data/types'
 import { formatTime, historyHeading, todayISO } from '../domain/dates'
 import { formatLocale } from '../domain/formatLocale'
 import { formatAmount, sumRub } from '../domain/money'
@@ -9,9 +10,11 @@ import { CategoryMark, Icon } from './icons'
 export function HistoryScreen({
   focusCategoryId = null,
   onBack,
+  onEdit,
 }: {
   focusCategoryId?: string | null
   onBack?: () => void
+  onEdit?: (expense: Expense) => void
 }) {
   const { snap, removeExpense } = useBudget()
   const { t } = useI18n()
@@ -131,9 +134,16 @@ export function HistoryScreen({
                       <span className="hist-amount">{formatAmount(expense.amount, snap.household.currency)}</span>
                     </button>
                     {openId === expense.id ? (
-                      <button className="row-delete" type="button" onClick={() => void removeExpense(expense.id)}>
-                        {t('delete')}
-                      </button>
+                      <span className="row-actions">
+                        {onEdit ? (
+                          <button className="row-edit" type="button" onClick={() => onEdit(expense)}>
+                            {t('editExpense')}
+                          </button>
+                        ) : null}
+                        <button className="row-delete" type="button" onClick={() => void removeExpense(expense.id)}>
+                          {t('delete')}
+                        </button>
+                      </span>
                     ) : null}
                   </li>
                 )

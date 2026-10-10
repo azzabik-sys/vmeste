@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { sameExpenseOnDay } from '../domain/duplicate'
 import { applyHouseOp, createHouse, type HouseDb } from './houseDb'
 import type { CreateHouseholdInput } from './types'
 
@@ -88,5 +89,64 @@ describe('общий план и участники', () => {
     const kept = applyHouseOp(db, { op: 'migrate', db: other })
     expect(kept.household.name).toBe('Наш бюджет')
     expect(kept.household.id).toBe(db.household.id)
+  })
+
+  it('перетаскивание меняет раздел категории и не трогает чужой авторство траты', () => {
+    const db = house()
+    const food = db.categories.find((category) => category.name === 'Еда')
+    const home = db.categories.find((category) => category.name === 'Жильё')
+    if (!food || !home) throw new Error('нет категорий')
+    const moved = applyHouseOp(db, {
+      op: 'reorder',
+      userId: 'local-user',
+      householdId: db.household.id,
+      ids: [food.id, home.id],
+      kinds: ['fixed', 'pace'],
+    })
+    expect(moved.categories.find((category) => category.id === food.id)?.kind).toBe('fixed')
+    expect(moved.categories.find((category) => category.id === home.id)?.kind).toBe('pace')
+
+    const saved = applyHouseOp(moved, {
+      op: 'saveExpense',
+      userId: 'local-user',
+      expense: {
+        id: 'e1',
+        householdId: db.household.id,
+        categoryId: food.id,
+        amount: 10,
+        spentOn: '2026-10-01',
+        note: '',
+        createdBy: 'local-user',
+        createdAt: '2026-10-01T00:00:00.000Z',
+      },
+    })
+    const edited = applyHouseOp(saved, {
+      op: 'saveExpense',
+      userId: 'local-user',
+      expense: {
+        ...saved.expenses[0],
+        amount: 12,
+        createdBy: 'someone-else',
+        createdAt: '2026-10-02T00:00:00.000Z',
+      },
+    })
+    expect(edited.expenses[0].amount).toBe(12)
+    expect(edited.expenses[0].createdBy).toBe('local-user')
+    expect(edited.expenses[0].createdAt).toBe('2026-10-01T00:00:00.000Z')
+    expect(
+      sameExpenseOnDay(edited.expenses, {
+        categoryId: food.id,
+        amount: 12,
+        spentOn: '2026-10-01',
+      }),
+    ).toBe(true)
+    expect(
+      sameExpenseOnDay(edited.expenses, {
+        id: 'e1',
+        categoryId: food.id,
+        amount: 12,
+        spentOn: '2026-10-01',
+      }),
+    ).toBe(false)
   })
 })

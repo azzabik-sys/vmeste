@@ -24,6 +24,12 @@ export type Member = {
   displayName: string
 }
 
+export type HouseholdBrief = {
+  id: string
+  name: string
+  role: MemberRole
+}
+
 export type Category = {
   id: string
   householdId: string
@@ -76,6 +82,8 @@ export type ReadySnapshot = {
   email: string | null
   userId: string
   household: Household
+  /** Все бюджеты, в которых состоит этот человек. Активный — household. */
+  households: HouseholdBrief[]
   members: Member[]
   categories: Category[]
   expenses: Expense[]

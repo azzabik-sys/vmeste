@@ -31,7 +31,7 @@ function initialDrafts(t: (key: TextKey) => string): Draft[] {
   })
 }
 
-export function Onboarding() {
+export function Onboarding({ extra = false, onCancel }: { extra?: boolean; onCancel?: () => void } = {}) {
   const { snap, error, createHousehold, joinHousehold } = useBudget()
   const { t, lang } = useI18n()
   const [step, setStep] = useState<1 | 2>(1)
@@ -53,7 +53,10 @@ export function Onboarding() {
     // Язык меняет только нетронутые названия. t берётся из этого же кадра.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang])
-  const [personName, setPersonName] = useState('')
+  const [personName, setPersonName] = useState(() => {
+    if (!extra || snap.status !== 'ready') return ''
+    return snap.members.find((member) => member.userId === snap.userId)?.displayName ?? ''
+  })
   const [code, setCode] = useState(snap.status === 'needs_household' ? (snap.pendingCode ?? '') : '')
   const [displayName, setDisplayName] = useState('')
   const [wantJoin, setWantJoin] = useState(
@@ -169,8 +172,11 @@ export function Onboarding() {
           className="icon-btn"
           type="button"
           aria-label={t('back')}
-          disabled={step === 1}
-          onClick={() => setStep(1)}
+          disabled={step === 1 && !extra}
+          onClick={() => {
+            if (step === 2) setStep(1)
+            else onCancel?.()
+          }}
         >
           <Icon name="back" size={22} />
         </button>

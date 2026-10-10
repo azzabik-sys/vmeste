@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { Expense } from '../data/types'
 import { monthOf, paceDateForMonth, todayISO } from '../domain/dates'
 import { useBudget } from './budget'
 import { useI18n } from './i18n'
@@ -10,6 +11,7 @@ import { Icon } from './icons'
 import { Onboarding } from './Onboarding'
 import { PeopleSheet } from './PeopleSheet'
 import { PlanScreen } from './PlanScreen'
+import { Notices } from './notices'
 import { SettingsScreen } from './SettingsScreen'
 
 type Tab = 'home' | 'history' | 'plan' | 'settings'
@@ -26,6 +28,7 @@ export function App() {
   const { t } = useI18n()
   const [tab, setTab] = useState<Tab>('home')
   const [expenseOpen, setExpenseOpen] = useState(false)
+  const [editing, setEditing] = useState<Expense | null>(null)
   const [peopleOpen, setPeopleOpen] = useState(false)
   const [monthStart, setMonthStart] = useState(() => monthOf(todayISO()).start)
   const [categoryFocus, setCategoryFocus] = useState<string | null>(null)
@@ -36,6 +39,7 @@ export function App() {
     if ((previous === 'onboarding' || previous === 'needs_household') && snap.status === 'ready') {
       if (tab !== 'home') setTab('home')
       if (expenseOpen) setExpenseOpen(false)
+      if (editing) setEditing(null)
       if (peopleOpen) setPeopleOpen(false)
       if (categoryFocus) setCategoryFocus(null)
     }
@@ -57,7 +61,24 @@ export function App() {
             {error}
           </p>
         ) : null}
-        <HistoryScreen focusCategoryId={categoryFocus} onBack={() => setCategoryFocus(null)} />
+        <Notices />
+        <HistoryScreen
+          focusCategoryId={categoryFocus}
+          onBack={() => setCategoryFocus(null)}
+          onEdit={(expense) => {
+            setEditing(expense)
+            setExpenseOpen(true)
+          }}
+        />
+        {expenseOpen ? (
+          <ExpenseSheet
+            expense={editing}
+            onClose={() => {
+              setExpenseOpen(false)
+              setEditing(null)
+            }}
+          />
+        ) : null}
       </div>
     )
   }
@@ -69,6 +90,7 @@ export function App() {
           {error}
         </p>
       ) : null}
+      <Notices />
       {tab === 'home' ? (
         <HomeScreen
           date={activeDate}
@@ -80,7 +102,14 @@ export function App() {
           onOpenCategory={setCategoryFocus}
         />
       ) : null}
-      {tab === 'history' ? <HistoryScreen /> : null}
+      {tab === 'history' ? (
+        <HistoryScreen
+          onEdit={(expense) => {
+            setEditing(expense)
+            setExpenseOpen(true)
+          }}
+        />
+      ) : null}
       {tab === 'plan' ? <PlanScreen /> : null}
       {tab === 'settings' ? (
         <SettingsScreen
@@ -91,7 +120,14 @@ export function App() {
         />
       ) : null}
       {tab === 'home' ? (
-        <button className="add-expense" type="button" onClick={() => setExpenseOpen(true)}>
+        <button
+          className="add-expense"
+          type="button"
+          onClick={() => {
+            setEditing(null)
+            setExpenseOpen(true)
+          }}
+        >
           <Icon name="plus" size={18} /> {t('addExpense')}
         </button>
       ) : null}
@@ -108,7 +144,15 @@ export function App() {
           </button>
         ))}
       </nav>
-      {expenseOpen ? <ExpenseSheet onClose={() => setExpenseOpen(false)} /> : null}
+      {expenseOpen ? (
+        <ExpenseSheet
+          expense={editing}
+          onClose={() => {
+            setExpenseOpen(false)
+            setEditing(null)
+          }}
+        />
+      ) : null}
       <PeopleSheet open={peopleOpen} onClose={() => setPeopleOpen(false)} />
     </div>
   )

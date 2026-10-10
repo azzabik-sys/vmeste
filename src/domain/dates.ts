@@ -1,7 +1,13 @@
 import { formatLocale } from './formatLocale'
 
-/** Филиппины, UTC+8. На 5 часов позже Москвы, без перехода на летнее время. */
-export const TIME_ZONE = 'Asia/Manila'
+/** Часовой пояс телефона. Календарные дни по-прежнему хранятся как YYYY-MM-DD. */
+export function deviceTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  } catch {
+    return 'UTC'
+  }
+}
 
 export type MonthInfo = {
   year: number
@@ -12,7 +18,7 @@ export type MonthInfo = {
   end: string
 }
 
-export function todayISO(now = new Date(), timeZone = TIME_ZONE): string {
+export function todayISO(now = new Date(), timeZone = deviceTimeZone()): string {
   return new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
@@ -79,7 +85,7 @@ export function dayHeading(iso: string, today: string): string {
   return iso === today ? `${relativeDay(0)}, ${label}` : label
 }
 
-export function formatTime(iso: string, timeZone = TIME_ZONE): string {
+export function formatTime(iso: string, timeZone = deviceTimeZone()): string {
   return new Intl.DateTimeFormat(formatLocale(), {
     hour: '2-digit',
     minute: '2-digit',

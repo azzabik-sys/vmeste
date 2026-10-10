@@ -5,6 +5,7 @@ import {
   deleteCategory,
   normalizeHouse,
   removeExpense,
+  removeMember,
   reorderCategories,
   saveExpense,
   updateCategory,
@@ -100,6 +101,13 @@ export function createLocalApi(): BudgetApi {
         email: null,
         userId: USER_ID,
         household: db.household,
+        households: [
+          {
+            id: db.household.id,
+            name: db.household.name,
+            role: db.members.find((member) => member.userId === USER_ID)?.role ?? 'owner',
+          },
+        ],
         members: db.members,
         categories: db.categories,
         expenses: db.expenses,
@@ -145,6 +153,9 @@ export function createLocalApi(): BudgetApi {
       storageClear()
       emit()
     },
+    async removeMember(_householdId, memberId) {
+      mutate((db) => removeMember(db, memberId))
+    },
     async updateHouseholdName(householdId, name) {
       mutate((db) => updateSettings(db, householdId, { name }))
     },
@@ -160,8 +171,8 @@ export function createLocalApi(): BudgetApi {
     async updateCategory(id, patch) {
       mutate((db) => updateCategory(db, id, patch))
     },
-    async reorderCategories(_householdId, ids) {
-      mutate((db) => reorderCategories(db, ids))
+    async reorderCategories(_householdId, ids, kinds) {
+      mutate((db) => reorderCategories(db, ids, kinds))
     },
     async deleteCategory(id) {
       mutate((db) => deleteCategory(db, id))

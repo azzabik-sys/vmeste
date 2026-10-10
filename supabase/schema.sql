@@ -20,8 +20,7 @@ create table if not exists public.household_members (
   primary key (household_id, user_id)
 );
 
-create unique index if not exists one_household_per_user
-  on public.household_members (user_id);
+drop index if exists public.one_household_per_user;
 
 create table if not exists public.categories (
   id uuid primary key default gen_random_uuid(),
@@ -88,10 +87,6 @@ begin
     raise exception 'Нужно войти';
   end if;
 
-  if exists (select 1 from public.household_members where user_id = auth.uid()) then
-    raise exception 'Вы уже в бюджете';
-  end if;
-
   person_name := left(trim(coalesce(p_display_name, '')), 40);
   if char_length(person_name) < 1 then
     raise exception 'Введите имя';
@@ -153,10 +148,6 @@ begin
     raise exception 'Нужно войти';
   end if;
 
-  if exists (select 1 from public.household_members where user_id = auth.uid()) then
-    raise exception 'Вы уже в бюджете';
-  end if;
-
   person_name := left(trim(coalesce(p_display_name, '')), 40);
   if char_length(person_name) < 1 then
     raise exception 'Введите имя';
@@ -170,6 +161,13 @@ begin
     raise exception 'Код не найден';
   end if;
 
+  if exists (
+    select 1 from public.household_members
+    where household_id = hid and user_id = auth.uid()
+  ) then
+    return hid;
+  end if;
+
   insert into public.household_members (household_id, user_id, role, display_name)
   values (hid, auth.uid(), 'member', person_name);
 
@@ -177,25 +175,42 @@ begin
 end;
 $$;
 
-create or replace function public.leave_household()
+drop function if exists public.leave_household();
+
+create or replace function public.leave_household(p_hid uuid default null)
 returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
 declare
-  hid uuid;
+  hid uuid := p_hid;
+  n integer;
   remaining integer;
 begin
   if auth.uid() is null then
     raise exception 'Нужно войти';
   end if;
 
-  select household_id into hid
-  from public.household_members
-  where user_id = auth.uid();
-
   if hid is null then
+    select count(*) into n
+    from public.household_members
+    where user_id = auth.uid();
+    if n = 0 then
+      return;
+    end if;
+    if n > 1 then
+      raise exception 'Выберите бюджет';
+    end if;
+    select household_id into hid
+    from public.household_members
+    where user_id = auth.uid();
+  end if;
+
+  if not exists (
+    select 1 from public.household_members
+    where user_id = auth.uid() and household_id = hid
+  ) then
     return;
   end if;
 
@@ -208,6 +223,76 @@ begin
 
   if remaining = 0 then
     delete from public.households where id = hid;
+    return;
+  end if;
+
+  if not exists (
+    select 1 from public.household_members
+    where household_id = hid and role = 'owner'
+  ) then
+    perform set_config('vmeste.transfer_owner', '1', true);
+    update public.household_members
+    set role = 'owner'
+    where household_id = hid
+      and user_id = (
+        select user_id from public.household_members
+        where household_id = hid
+        limit 1
+      );
+  end if;
+end;
+$$;
+
+create or replace function public.remove_member(p_hid uuid, p_user uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  remaining integer;
+begin
+  if auth.uid() is null then
+    raise exception 'Нужно войти';
+  end if;
+  if p_user is null or p_user = auth.uid() then
+    raise exception 'Не получилось';
+  end if;
+  if not public.is_member(p_hid) then
+    raise exception 'Это не ваш бюджет';
+  end if;
+  if not exists (
+    select 1 from public.household_members
+    where household_id = p_hid and user_id = p_user
+  ) then
+    return;
+  end if;
+
+  delete from public.household_members
+  where household_id = p_hid and user_id = p_user;
+
+  select count(*) into remaining
+  from public.household_members
+  where household_id = p_hid;
+
+  if remaining = 0 then
+    delete from public.households where id = p_hid;
+    return;
+  end if;
+
+  if not exists (
+    select 1 from public.household_members
+    where household_id = p_hid and role = 'owner'
+  ) then
+    perform set_config('vmeste.transfer_owner', '1', true);
+    update public.household_members
+    set role = 'owner'
+    where household_id = p_hid
+      and user_id = (
+        select user_id from public.household_members
+        where household_id = p_hid
+        limit 1
+      );
   end if;
 end;
 $$;
@@ -235,7 +320,9 @@ as $$
 begin
   new.household_id := old.household_id;
   new.user_id := old.user_id;
-  new.role := old.role;
+  if current_setting('vmeste.transfer_owner', true) is distinct from '1' then
+    new.role := old.role;
+  end if;
   new.display_name := left(trim(new.display_name), 40);
   if char_length(new.display_name) < 1 then
     raise exception 'Введите имя';
@@ -342,11 +429,13 @@ grant select, insert, update, delete on public.expenses to authenticated;
 revoke all on function public.is_member(uuid) from public, anon;
 revoke all on function public.create_household(text, text) from public, anon;
 revoke all on function public.join_household(text, text) from public, anon;
-revoke all on function public.leave_household() from public, anon;
+revoke all on function public.leave_household(uuid) from public, anon;
+revoke all on function public.remove_member(uuid, uuid) from public, anon;
 grant execute on function public.is_member(uuid) to authenticated;
 grant execute on function public.create_household(text, text) to authenticated;
 grant execute on function public.join_household(text, text) to authenticated;
-grant execute on function public.leave_household() to authenticated;
+grant execute on function public.leave_household(uuid) to authenticated;
+grant execute on function public.remove_member(uuid, uuid) to authenticated;
 
 -- Удаление аккаунта: вход исчезает, чужой общий бюджет остаётся.
 alter table public.expenses add column if not exists created_by_name text not null default '';
@@ -385,41 +474,55 @@ set search_path = public
 as $$
 declare
   uid uuid := auth.uid();
-  hid uuid;
-  person text;
+  rec record;
   remaining integer;
 begin
   if uid is null then
     raise exception 'Нужно войти';
   end if;
 
-  select household_id, display_name into hid, person
-  from public.household_members
-  where user_id = uid;
+  -- Триггер guard_expense иначе вернёт автора обратно, и удаление пользователя упрётся в внешний ключ.
+  perform set_config('vmeste.deleting_account', '1', true);
 
-  if hid is not null then
-    -- Триггер guard_expense иначе вернёт автора обратно, и удаление пользователя упрётся в внешний ключ.
-    perform set_config('vmeste.deleting_account', '1', true);
-
+  for rec in
+    select household_id, display_name
+    from public.household_members
+    where user_id = uid
+  loop
     update public.expenses
     set created_by_name = case
-          when created_by_name = '' then left(coalesce(person, ''), 40)
+          when created_by_name = '' then left(coalesce(rec.display_name, ''), 40)
           else created_by_name
         end,
         created_by = null
-    where created_by = uid;
+    where created_by = uid and household_id = rec.household_id;
 
     select count(*) into remaining
     from public.household_members
-    where household_id = hid and user_id <> uid;
+    where household_id = rec.household_id and user_id <> uid;
 
     if remaining = 0 then
-      delete from public.households where id = hid;
+      delete from public.households where id = rec.household_id;
     else
       delete from public.household_members
-      where user_id = uid and household_id = hid;
+      where user_id = uid and household_id = rec.household_id;
+
+      if not exists (
+        select 1 from public.household_members
+        where household_id = rec.household_id and role = 'owner'
+      ) then
+        perform set_config('vmeste.transfer_owner', '1', true);
+        update public.household_members
+        set role = 'owner'
+        where household_id = rec.household_id
+          and user_id = (
+            select user_id from public.household_members
+            where household_id = rec.household_id
+            limit 1
+          );
+      end if;
     end if;
-  end if;
+  end loop;
 
   delete from auth.users where id = uid;
 end;

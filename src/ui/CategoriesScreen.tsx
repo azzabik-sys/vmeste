@@ -1,95 +1,214 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { CATEGORY_ICONS, type CategoryIcon, type CategoryKind } from '../data/types'
-import { currencyMeta } from '../domain/money'
+import { currencyMeta, formatAmount } from '../domain/money'
 import { useBudget } from './budget'
 import { categoryTitle, useI18n } from './i18n'
 import { CategoryMark, Icon } from './icons'
 import { AmountField } from './widgets'
 
+type Row = { id: string; kind: CategoryKind }
+
+function signatureOf(categories: { id: string; kind: CategoryKind; sortOrder: number }[]) {
+  return [...categories]
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id))
+    .map((category) => `${category.id}:${category.kind}`)
+    .join('|')
+}
+
+function rowsFrom(signature: string): Row[] {
+  return signature
+    .split('|')
+    .filter(Boolean)
+    .map((part) => {
+      const split = part.indexOf(':')
+      const id = part.slice(0, split)
+      const kind = part.slice(split + 1) === 'fixed' ? 'fixed' : 'pace'
+      return { id, kind }
+    })
+}
+
+function placeRow(rows: Row[], id: string, kind: CategoryKind, index: number): Row[] {
+  const rest = rows.filter((row) => row.id !== id)
+  const fixed = rest.filter((row) => row.kind === 'fixed')
+  const pace = rest.filter((row) => row.kind === 'pace')
+  const bucket = kind === 'fixed' ? fixed : pace
+  bucket.splice(Math.max(0, Math.min(index, bucket.length)), 0, { id, kind })
+  return [...fixed, ...pace]
+}
+
+function sameRows(left: Row[], right: Row[]) {
+  return left.length === right.length && left.every((row, index) => row.id === right[index]?.id && row.kind === right[index]?.kind)
+}
+
 export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => void; embedded?: boolean }) {
   const { snap, updateCategory, deleteCategory, addCategory, reorderCategories } = useBudget()
   const { t, lang } = useI18n()
-  const idKey =
-    snap.status === 'ready'
-      ? [...snap.categories]
-          .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map((category) => category.id)
-          .join('|')
-      : ''
-  const [order, setOrder] = useState<string[]>(() => idKey.split('|').filter(Boolean))
+  const signature = snap.status === 'ready' ? signatureOf(snap.categories) : ''
+  const [rows, setRows] = useState<Row[]>(() => rowsFrom(signature))
   const [adding, setAdding] = useState<CategoryKind | null>(null)
   const [draftName, setDraftName] = useState('')
+  const [lifted, setLifted] = useState<string | null>(null)
   const dragId = useRef<string | null>(null)
-  const orderRef = useRef<string[]>(order)
+  const rowsRef = useRef<Row[]>(rows)
+  const serverRef = useRef(signature)
   const rowRefs = useRef(new Map<string, HTMLLIElement>())
+  const sectionRefs = useRef(new Map<CategoryKind, HTMLElement>())
+  const ghostRef = useRef<HTMLDivElement>(null)
+  const pointRef = useRef({ x: 0, y: 0, dx: 0, dy: 0, width: 0, height: 0 })
 
   useEffect(() => {
-    const next = idKey.split('|').filter(Boolean)
-    orderRef.current = next
-    setOrder(next)
-  }, [idKey])
+    if (dragId.current) return
+    serverRef.current = signature
+    const next = rowsFrom(signature)
+    rowsRef.current = next
+    setRows(next)
+  }, [signature])
+
+  function paintGhost(x: number, y: number) {
+    pointRef.current.x = x
+    pointRef.current.y = y
+    const ghost = ghostRef.current
+    if (!ghost) return
+    const { dx, dy } = pointRef.current
+    ghost.style.transform = `translate3d(${x - dx}px, ${y - dy}px, 0)`
+  }
+
+  function sectionKind(clientY: number): CategoryKind {
+    const fixed = sectionRefs.current.get('fixed')?.getBoundingClientRect()
+    const pace = sectionRefs.current.get('pace')?.getBoundingClientRect()
+    if (fixed && clientY <= fixed.bottom) return 'fixed'
+    if (pace && clientY >= pace.top) return 'pace'
+    if (fixed && pace) return clientY < (fixed.bottom + pace.top) / 2 ? 'fixed' : 'pace'
+    return 'pace'
+  }
+
+  function relocate(clientY: number) {
+    const id = dragId.current
+    if (!id) return
+    const kind = sectionKind(clientY)
+    const list = rowsRef.current.filter((row) => row.kind === kind && row.id !== id)
+    let index = list.length
+    for (let item = 0; item < list.length; item += 1) {
+      const element = rowRefs.current.get(list[item].id)
+      if (!element) continue
+      const rect = element.getBoundingClientRect()
+      if (clientY < rect.top + rect.height / 2) {
+        index = item
+        break
+      }
+    }
+    const next = placeRow(rowsRef.current, id, kind, index)
+    if (sameRows(next, rowsRef.current)) return
+    rowsRef.current = next
+    setRows(next)
+  }
+
+  function finish() {
+    const id = dragId.current
+    dragId.current = null
+    document.body.style.overflow = ''
+    const items = rowsRef.current
+    const changed = items.map((row) => `${row.id}:${row.kind}`).join('|') !== serverRef.current
+    const ghost = ghostRef.current
+    const row = id ? rowRefs.current.get(id) : null
+    const commit = () => {
+      setLifted(null)
+      if (changed) void reorderCategories(items.map((row) => row.id), items.map((row) => row.kind))
+    }
+    if (!ghost || !row) {
+      commit()
+      return
+    }
+    const rect = row.getBoundingClientRect()
+    const animation = ghost.animate(
+      [{ transform: ghost.style.transform }, { transform: `translate3d(${rect.left}px, ${rect.top}px, 0)` }],
+      { duration: 180, easing: 'ease-out', fill: 'forwards' },
+    )
+    const done = () => commit()
+    animation.onfinish = done
+    animation.oncancel = done
+  }
+
+  function startDrag(event: ReactPointerEvent<HTMLButtonElement>, id: string) {
+    if (event.button !== 0) return
+    const row = rowRefs.current.get(id)
+    if (!row) return
+    event.preventDefault()
+    const rect = row.getBoundingClientRect()
+    dragId.current = id
+    pointRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      dx: event.clientX - rect.left,
+      dy: event.clientY - rect.top,
+      width: rect.width,
+      height: rect.height,
+    }
+    setLifted(id)
+    document.body.style.overflow = 'hidden'
+    const pointerId = event.pointerId
+    const move = (ev: PointerEvent) => {
+      if (ev.pointerId !== pointerId) return
+      paintGhost(ev.clientX, ev.clientY)
+      relocate(ev.clientY)
+    }
+    const up = (ev: PointerEvent) => {
+      if (ev.pointerId !== pointerId) return
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
+      finish()
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', up)
+  }
+
+  useEffect(() => {
+    if (!lifted) return
+    paintGhost(pointRef.current.x, pointRef.current.y)
+  }, [lifted])
 
   if (snap.status !== 'ready') return null
   const byId = new Map(snap.categories.map((category) => [category.id, category]))
   const symbol = currencyMeta(snap.household.currency).symbol
-
-  function move(clientY: number) {
-    const id = dragId.current
-    if (!id) return
-    let target: string | null = null
-    for (const [rowId, element] of rowRefs.current) {
-      const rect = element.getBoundingClientRect()
-      if (clientY >= rect.top && clientY <= rect.bottom) target = rowId
-    }
-    if (!target || target === id) return
-    if (byId.get(target)?.kind !== byId.get(id)?.kind) return
-    const next = [...orderRef.current]
-    const from = next.indexOf(id)
-    const to = next.indexOf(target)
-    if (from < 0 || to < 0) return
-    next.splice(from, 1)
-    next.splice(to, 0, id)
-    orderRef.current = next
-    setOrder(next)
-  }
+  const liftedCategory = lifted ? byId.get(lifted) : undefined
+  const liftedLabel = liftedCategory ? categoryTitle(liftedCategory.icon, liftedCategory.name, t) : ''
 
   function rowsFor(kind: CategoryKind) {
-    return order.filter((id) => byId.get(id)?.kind === kind)
+    return rows.filter((row) => row.kind === kind)
   }
 
   const groups = (['fixed', 'pace'] as const).map((kind) => (
-    <section className="kind-block" key={kind}>
+    <section
+      className={`kind-block${lifted && rows.find((row) => row.id === lifted)?.kind === kind ? ' is-target' : ''}`}
+      key={kind}
+      ref={(node) => {
+        if (node) sectionRefs.current.set(kind, node)
+        else sectionRefs.current.delete(kind)
+      }}
+    >
       <h2>{t(kind === 'fixed' ? 'regularTitle' : 'dailyTitle')}</h2>
       <p className="kind-hint">{t(kind === 'fixed' ? 'regularHint' : 'dailyHint')}</p>
       <ul className="manage-list">
-        {rowsFor(kind).map((id) => {
-          const category = byId.get(id)
+        {rowsFor(kind).map((row) => {
+          const category = byId.get(row.id)
           if (!category) return null
           const label = categoryTitle(category.icon, category.name, t)
           return (
             <li
-              key={id}
+              key={row.id}
+              className={lifted === row.id ? 'is-lifted' : undefined}
               ref={(node) => {
-                if (node) rowRefs.current.set(id, node)
-                else rowRefs.current.delete(id)
+                if (node) rowRefs.current.set(row.id, node)
+                else rowRefs.current.delete(row.id)
               }}
             >
               <button
                 className="grip"
                 type="button"
                 aria-label={t('orderOf', { name: label })}
-                onPointerDown={(event) => {
-                  dragId.current = id
-                  event.currentTarget.setPointerCapture(event.pointerId)
-                }}
-                onPointerMove={(event) => {
-                  if (dragId.current) move(event.clientY)
-                }}
-                onPointerUp={() => {
-                  if (!dragId.current) return
-                  dragId.current = null
-                  void reorderCategories(orderRef.current)
-                }}
+                onPointerDown={(event) => startDrag(event, row.id)}
               >
                 <Icon name="grip" size={16} />
               </button>
@@ -177,7 +296,27 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
     </section>
   ))
 
-  if (embedded) return <>{groups}</>
+  const ghost = lifted && liftedCategory ? (
+    <div
+      className="drag-ghost"
+      ref={ghostRef}
+      style={{ width: pointRef.current.width || undefined, height: pointRef.current.height || undefined }}
+    >
+      <Icon name="grip" size={16} />
+      <CategoryMark icon={liftedCategory.icon} size={32} />
+      <span>{liftedLabel}</span>
+      <strong>{formatAmount(liftedCategory.plannedAmount, snap.household.currency)}</strong>
+    </div>
+  ) : null
+
+  if (embedded) {
+    return (
+      <>
+        {groups}
+        {ghost}
+      </>
+    )
+  }
 
   return (
     <section className="screen screen-plain">
@@ -189,6 +328,7 @@ export function CategoriesScreen({ onBack, embedded = false }: { onBack?: () => 
         <span className="push-side" />
       </header>
       {groups}
+      {ghost}
     </section>
   )
 }
