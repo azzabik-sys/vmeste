@@ -1,4 +1,5 @@
 import { daysUntilMonthEnd, formatDayCount, monthOf } from '../domain/dates'
+import { formatLocale } from '../domain/formatLocale'
 import type { PaceJudgement, PaceLevel } from '../domain/pace'
 import { spendTone } from '../domain/pace'
 import { formatAmount, formatPercent } from '../domain/money'
@@ -9,6 +10,16 @@ import { CategoryMark, Icon } from './icons'
 import { Bar, MonthPicker, Ring } from './widgets'
 
 const AVATAR_COLORS = ['#3B82F6', '#7C6BF2', '#18A85B', '#F59E0B']
+
+function daysLeftPhrase(
+  count: number,
+  t: (key: TextKey, vars?: Record<string, string | number>) => string,
+) {
+  const rule = new Intl.PluralRules(formatLocale()).select(count)
+  const key: TextKey =
+    rule === 'one' ? 'daysLeftOne' : rule === 'few' || rule === 'two' ? 'daysLeftFew' : rule === 'many' ? 'daysLeftMany' : 'daysLeftOther'
+  return t(key, { count })
+}
 
 function paceNote(
   judgement: PaceJudgement,
@@ -88,24 +99,25 @@ export function HomeScreen({
       </header>
 
       <article className="spent-card">
-        <div>
-          <p className="spent-kicker">{over ? t('overBudget') : t('budgetLeft')}</p>
-          <p className={`spent-value${over ? ' tone-over' : ''}`} data-testid="left">
-            {formatAmount(Math.abs(leftCents) / 100, currency)}
-          </p>
-          <p className="spent-of">
-            {t('spentOf', { amount: formatAmount(budget, currency) })}
-            {daysLeft === null ? null : (
-              <span className="spent-days">
-                {daysLeft === 0 ? t('monthLastDay') : t('monthDaysLeft', { days: formatDayCount(daysLeft) })}
-              </span>
-            )}
-          </p>
-          <p className="spent-of" data-testid="spent">
-            {t('spentAmount', { amount: formatAmount(summary.spentTotal, currency) })}
-          </p>
+        <div className="spent-top">
+          <div>
+            <p className="spent-kicker">{over ? t('overBudget') : t('budgetLeft')}</p>
+            <p className={`spent-value${over ? ' tone-over' : ''}`} data-testid="left">
+              {formatAmount(Math.abs(leftCents) / 100, currency)}
+            </p>
+            <p className="spent-of">{t('spentOf', { amount: formatAmount(budget, currency) })}</p>
+          </div>
+          <Ring percent={totalPercent} tone={totalTone} />
         </div>
-        <Ring percent={totalPercent} tone={totalTone} />
+        <div className="spent-foot">
+          <p data-testid="spent">{t('spentAmount', { amount: formatAmount(summary.spentTotal, currency) })}</p>
+          {daysLeft === null ? null : (
+            <p className="spent-days">
+              <Icon name="calendar" size={15} />
+              {daysLeft === 0 ? t('monthLastDay') : daysLeftPhrase(daysLeft, t)}
+            </p>
+          )}
+        </div>
       </article>
 
       {(['pace', 'fixed'] as const).map((kind) => {

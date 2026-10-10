@@ -645,27 +645,52 @@ h1, h2, p { margin: 0; }
 
 .spent-card {
   margin: 8px 0 4px;
-  padding: 14px 16px;
+  padding: 16px 16px 14px;
   background: #fff;
+  color: #171714;
   border-radius: 16px;
+}
+
+.spent-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.spent-kicker, .spent-of { color: #77736d; font-size: 13px; }
+.spent-kicker { color: #77736d; font-size: 13px; font-weight: 500; }
 
-.spent-of { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
-
-.spent-days { color: #171714; font-weight: 600; }
+.spent-of { color: #77736d; font-size: 14px; }
 
 .spent-value {
-  font-size: 32px;
-  line-height: 1.1;
+  color: #171714;
+  font-size: 34px;
+  line-height: 1.05;
   font-weight: 700;
   letter-spacing: -0.03em;
-  margin: 2px 0;
+  margin: 4px 0 2px;
+}
+
+.spent-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eeeae4;
+  color: #77736d;
+  font-size: 14px;
+}
+
+.spent-days {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  color: #77736d;
+  font-weight: 500;
+  text-align: right;
 }
 
 .cat, .cat.stat {
