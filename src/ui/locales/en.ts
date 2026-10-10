@@ -36,6 +36,8 @@ export const en = {
   expenseUpdated: 'Expense updated',
   duplicateExpense: 'This amount is already in {name} today. You can still save it.',
   partnerSpent: 'New expense from {name}: {amount}',
+  partnerExpenses: 'New expenses',
+  ok: 'OK',
   monthKept: 'Budget settings were kept for the new month. You can change them in Settings.',
   budgets: 'Budgets',
   newBudget: 'New budget',

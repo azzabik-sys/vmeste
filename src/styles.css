@@ -1369,6 +1369,61 @@ h1, h2, p { margin: 0; }
   min-width: 24px;
 }
 
+.partner-overlay {
+  z-index: 50;
+  align-items: center;
+  padding: 24px 16px;
+}
+
+.partner-popup {
+  width: min(100%, 400px);
+  max-height: min(80dvh, 640px);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: #171714;
+  border-radius: 20px;
+  padding: 18px 16px 16px;
+  box-shadow: 0 16px 40px rgb(23 23 20 / 16%);
+}
+
+.partner-popup h2 { font-size: 20px; font-weight: 750; }
+
+.partner-popup .sub { margin-top: 2px; color: #77736d; font-size: 14px; }
+
+.partner-list {
+  list-style: none;
+  margin: 14px 0;
+  padding: 0;
+  overflow: auto;
+}
+
+.partner-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid #eeeae4;
+}
+
+.partner-list strong { display: block; font-size: 16px; font-weight: 650; }
+
+.partner-list em {
+  display: block;
+  margin-top: 2px;
+  font-style: normal;
+  color: #77736d;
+  font-size: 13px;
+}
+
+.partner-list b {
+  flex: none;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
 .budget-list { display: flex; flex-direction: column; }
 
 .budget-pick {

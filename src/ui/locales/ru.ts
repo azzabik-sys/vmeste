@@ -38,6 +38,8 @@ export const ru: Catalog = {
   expenseUpdated: 'Трата изменена',
   duplicateExpense: 'Такая сумма в «{name}» сегодня уже есть. Сохранить всё равно можно.',
   partnerSpent: 'Новая трата от {name}: {amount}',
+  partnerExpenses: 'Новые траты',
+  ok: 'Ок',
   monthKept: 'Настройки бюджета сохранились. Поменять их можно в настройках.',
   budgets: 'Бюджеты',
   newBudget: 'Новый бюджет',

@@ -38,6 +38,8 @@ export const vi: Catalog = {
   expenseUpdated: 'Đã sửa khoản chi',
   duplicateExpense: 'Số tiền này đã có trong {name} hôm nay. Bạn vẫn có thể lưu.',
   partnerSpent: 'Khoản chi mới từ {name}: {amount}',
+  partnerExpenses: 'Khoản chi mới',
+  ok: 'OK',
   monthKept: 'Cài đặt ngân sách được giữ cho tháng mới. Bạn có thể đổi trong Cài đặt.',
   budgets: 'Ngân sách',
   newBudget: 'Ngân sách mới',
