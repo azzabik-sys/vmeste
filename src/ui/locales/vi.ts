@@ -91,6 +91,8 @@ export const vi: Catalog = {
   period: 'Kỳ',
   pace: 'Theo dõi tốc độ chi',
   paceHint: 'Báo khi chi nhanh hơn kế hoạch',
+  previewLook: 'Giao diện cũ',
+  previewLookHint: 'Công tắc thử. Màn hình chính như trước bản cập nhật này.',
   paceAbove: 'Chi nhanh hơn kế hoạch',
   paceLeft: 'Còn {amount} cho {days}',
   paceOver: 'Vượt ngân sách {amount}',

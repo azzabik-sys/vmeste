@@ -89,6 +89,8 @@ export const en = {
   period: 'Period',
   pace: 'Spending pace',
   paceHint: 'Warn if spending is faster than the plan',
+  previewLook: 'Previous look',
+  previewLookHint: 'Test switch. Shows the home screen from before the latest update.',
   paceAbove: 'Spending is ahead of plan',
   paceLeft: '{amount} left for {days}',
   paceOver: 'Over budget by {amount}',

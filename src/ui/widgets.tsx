@@ -63,6 +63,46 @@ export function Bar({ percent, tone, color }: { percent: number; tone: PaceLevel
   )
 }
 
+export function Ring({ percent, tone }: { percent: number; tone: PaceLevel }) {
+  const size = 72
+  const stroke = 7
+  const radius = (size - stroke) / 2
+  const length = 2 * Math.PI * radius
+  const clamped = Math.max(0, Math.min(percent, 100))
+  const dash = (clamped / 100) * length
+  const color = tone === 'over' ? '#EF4444' : tone === 'warn' ? '#F59E0B' : '#18A85B'
+  return (
+    <svg className="ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true">
+      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#E9E9E7" strokeWidth={stroke} />
+      {clamped > 0 ? (
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={`${dash} ${length - dash}`}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      ) : null}
+      <text
+        x="50%"
+        y="52%"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="#171714"
+        fontSize="13"
+        fontWeight="700"
+        fontFamily="-apple-system, BlinkMacSystemFont, SF Pro Text, Inter, sans-serif"
+      >
+        {percent}%
+      </text>
+    </svg>
+  )
+}
+
 export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceLevel; caption: string }) {
   const radius = 46
   const cx = 64

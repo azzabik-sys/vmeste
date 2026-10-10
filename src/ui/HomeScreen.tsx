@@ -7,7 +7,8 @@ import { summarizeMonth } from '../domain/summary'
 import { useBudget } from './budget'
 import { categoryTitle, useI18n, type TextKey } from './i18n'
 import { CategoryMark, categoryLook, Icon } from './icons'
-import { Bar, Gauge, MonthPicker } from './widgets'
+import { useLook } from './look'
+import { Bar, Gauge, MonthPicker, Ring } from './widgets'
 
 const AVATARS = [
   { bg: '#1F8A4C', fg: '#fff' },
@@ -67,6 +68,8 @@ export function HomeScreen({
 }) {
   const { snap } = useBudget()
   const { t } = useI18n()
+  const { look } = useLook()
+  const classic = look === 'classic'
   if (snap.status !== 'ready') return null
 
   const summary = summarizeMonth(snap.categories, snap.expenses, date)
@@ -89,7 +92,11 @@ export function HomeScreen({
               <button
                 key={member.userId}
                 type="button"
-                style={{ background: AVATARS[index % AVATARS.length].bg, color: AVATARS[index % AVATARS.length].fg }}
+                style={
+                  classic
+                    ? { background: ['#3B82F6', '#7C6BF2', '#18A85B', '#F59E0B'][index % 4] }
+                    : { background: AVATARS[index % AVATARS.length].bg, color: AVATARS[index % AVATARS.length].fg }
+                }
                 aria-label={t('participants')}
                 onClick={onOpenPeople}
               >
@@ -104,46 +111,72 @@ export function HomeScreen({
       </header>
 
       <article className="spent-card">
-        <div className="spent-main">
-          <Gauge percent={totalPercent} tone={totalTone} caption={t('spent')} />
-          <span className="spent-rule" />
-          <div>
-            <p className="spent-kicker">
-              {over ? t('overBudget') : t('budgetLeft')}
-              <Icon name="chevron" size={16} />
-            </p>
-            <p className={`spent-value${over ? ' tone-over' : ''}`} data-testid="left">
-              {formatAmount(Math.abs(leftCents) / 100, currency)}
-            </p>
-            <p className="spent-of">{t('spentOf', { amount: formatAmount(budget, currency) })}</p>
-          </div>
-        </div>
-        <div className="spent-foot">
-          <p className="spent-stat" data-testid="spent">
-            <span className="spent-ico">
-              <Icon name="card" size={16} />
-            </span>
-            <span>
-              <em>{t('spent')}</em>
-              <strong>{formatAmount(summary.spentTotal, currency)}</strong>
-            </span>
-          </p>
-          <p className="spent-stat">
-            <span className="spent-ico">
-              <Icon name="calendar" size={16} />
-            </span>
-            <span>
-              {daysLeft === null ? (
-                <strong>{monthSpan(monthStart)}</strong>
-              ) : (
-                <>
-                  <strong>{daysLeft === 0 ? t('monthLastDay') : daysLeftPhrase(daysLeft, t)}</strong>
-                  <em>{monthSpan(monthStart)}</em>
-                </>
+        {classic ? (
+          <>
+            <div className="spent-top">
+              <div>
+                <p className="spent-kicker">{over ? t('overBudget') : t('budgetLeft')}</p>
+                <p className={`spent-value${over ? ' tone-over' : ''}`} data-testid="left">
+                  {formatAmount(Math.abs(leftCents) / 100, currency)}
+                </p>
+                <p className="spent-of">{t('spentOf', { amount: formatAmount(budget, currency) })}</p>
+              </div>
+              <Ring percent={totalPercent} tone={totalTone} />
+            </div>
+            <div className="spent-foot">
+              <p data-testid="spent">{t('spentAmount', { amount: formatAmount(summary.spentTotal, currency) })}</p>
+              {daysLeft === null ? null : (
+                <p className="spent-days">
+                  <Icon name="calendar" size={15} />
+                  {daysLeft === 0 ? t('monthLastDay') : daysLeftPhrase(daysLeft, t)}
+                </p>
               )}
-            </span>
-          </p>
-        </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="spent-main">
+              <Gauge percent={totalPercent} tone={totalTone} caption={t('spent')} />
+              <span className="spent-rule" />
+              <div>
+                <p className="spent-kicker">
+                  {over ? t('overBudget') : t('budgetLeft')}
+                  <Icon name="chevron" size={16} />
+                </p>
+                <p className={`spent-value${over ? ' tone-over' : ''}`} data-testid="left">
+                  {formatAmount(Math.abs(leftCents) / 100, currency)}
+                </p>
+                <p className="spent-of">{t('spentOf', { amount: formatAmount(budget, currency) })}</p>
+              </div>
+            </div>
+            <div className="spent-foot">
+              <p className="spent-stat" data-testid="spent">
+                <span className="spent-ico">
+                  <Icon name="card" size={16} />
+                </span>
+                <span>
+                  <em>{t('spent')}</em>
+                  <strong>{formatAmount(summary.spentTotal, currency)}</strong>
+                </span>
+              </p>
+              <p className="spent-stat">
+                <span className="spent-ico">
+                  <Icon name="calendar" size={16} />
+                </span>
+                <span>
+                  {daysLeft === null ? (
+                    <strong>{monthSpan(monthStart)}</strong>
+                  ) : (
+                    <>
+                      <strong>{daysLeft === 0 ? t('monthLastDay') : daysLeftPhrase(daysLeft, t)}</strong>
+                      <em>{monthSpan(monthStart)}</em>
+                    </>
+                  )}
+                </span>
+              </p>
+            </div>
+          </>
+        )}
       </article>
 
       {(['pace', 'fixed'] as const).map((kind) => {
@@ -152,6 +185,7 @@ export function HomeScreen({
         return (
           <section className="cat-group" key={kind}>
             <h2>{t(kind === 'pace' ? 'dailyTitle' : 'regularTitle')}</h2>
+            {classic ? <p className="kind-hint">{t(kind === 'pace' ? 'dailyHint' : 'regularHint')}</p> : null}
             <ul className="cat-list">
               {rows.map((row) => {
                 const tone = spendTone({
@@ -172,19 +206,29 @@ export function HomeScreen({
                       data-tone={tone}
                       onClick={() => onOpenCategory(row.category.id)}
                     >
-                      <CategoryMark icon={row.category.icon} size={44} />
+                      <CategoryMark icon={row.category.icon} size={classic ? 34 : 44} />
                       <span className="cat-copy">
                         <span className="cat-name">{label}</span>
                         <span className="cat-meta">
                           {formatAmount(row.spent, currency)} / {formatAmount(row.category.plannedAmount, currency)}
                         </span>
                         {note ? <span className={`cat-note tone-${note.tone}`}>{note.text}</span> : null}
+                        {classic ? <Bar percent={row.percent} tone={tone} /> : null}
                       </span>
-                      <span className={`cat-side ${row.percent > 0 ? '' : 'tone-zero'}`}>
-                        <span style={row.percent > 0 ? { color: accent } : undefined}>{row.percent}%</span>
-                        <Icon name="chevron" size={16} />
+                      <span className={`cat-side ${row.percent > 0 ? (classic ? `tone-${tone}` : '') : 'tone-zero'}`}>
+                        {classic ? (
+                          <>
+                            {row.percent}%
+                            <Icon name="chevron" size={16} />
+                          </>
+                        ) : (
+                          <>
+                            <span style={row.percent > 0 ? { color: accent } : undefined}>{row.percent}%</span>
+                            <Icon name="chevron" size={16} />
+                          </>
+                        )}
                       </span>
-                      <Bar percent={row.percent} tone={tone} color={accent} />
+                      {classic ? null : <Bar percent={row.percent} tone={tone} color={accent} />}
                     </button>
                   </li>
                 )

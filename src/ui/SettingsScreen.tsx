@@ -4,6 +4,7 @@ import { CURRENCIES } from '../domain/money'
 import { useBudget } from './budget'
 import { LanguageSwitch, useI18n } from './i18n'
 import { Icon } from './icons'
+import { useLook } from './look'
 import { LegalScreen } from './LegalScreen'
 import type { LegalId } from './legalCopy'
 import { Onboarding } from './Onboarding'
@@ -23,6 +24,7 @@ export function SettingsScreen({
   const { snap, updateHouseholdSettings, deleteBudget, deleteAccount, switchHousehold, removeMember, joinHousehold } =
     useBudget()
   const { t } = useI18n()
+  const { look, setLook } = useLook()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [confirmAccount, setConfirmAccount] = useState(false)
   const [legal, setLegal] = useState<LegalId | null>(null)
@@ -206,6 +208,26 @@ export function SettingsScreen({
           aria-checked={household.paceEnabled}
           aria-label={t('pace')}
           onClick={() => void updateHouseholdSettings({ paceEnabled: !household.paceEnabled })}
+        >
+          <i />
+        </button>
+      </div>
+
+      <div className="set-card toggle-row">
+        <div>
+          <p className="toggle-title">{t('previewLook')}</p>
+          <p className="toggle-sub">{t('previewLookHint')}</p>
+        </div>
+        <button
+          className="switch"
+          type="button"
+          role="switch"
+          aria-checked={look === 'classic'}
+          aria-label={t('previewLook')}
+          onClick={() => {
+            setLook(look === 'classic' ? 'new' : 'classic')
+            onBack()
+          }}
         >
           <i />
         </button>

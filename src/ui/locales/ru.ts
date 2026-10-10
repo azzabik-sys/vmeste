@@ -91,6 +91,8 @@ export const ru: Catalog = {
   period: 'Период',
   pace: 'Контроль темпа расходов',
   paceHint: 'Показывать предупреждения, если тратим быстрее плана',
+  previewLook: 'Старый вид',
+  previewLookHint: 'Тестовый переключатель. Главный экран как до последнего обновления.',
   paceAbove: 'Расходы выше плана',
   paceLeft: 'Осталось {amount} на {days}',
   paceOver: 'Бюджет превышен на {amount}',

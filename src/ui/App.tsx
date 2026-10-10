@@ -8,6 +8,7 @@ import { ExpenseSheet } from './ExpenseSheet'
 import { HistoryScreen } from './HistoryScreen'
 import { HomeScreen } from './HomeScreen'
 import { Icon } from './icons'
+import { useLook } from './look'
 import { Onboarding } from './Onboarding'
 import { PeopleSheet } from './PeopleSheet'
 import { PlanScreen } from './PlanScreen'
@@ -26,6 +27,8 @@ const TABS: { id: Tab; label: Tab; icon: string }[] = [
 export function App() {
   const { snap, error, refresh } = useBudget()
   const { t } = useI18n()
+  const { look } = useLook()
+  const classic = look === 'classic'
   const [tab, setTab] = useState<Tab>('home')
   const [expenseOpen, setExpenseOpen] = useState(false)
   const [editing, setEditing] = useState<Expense | null>(null)
@@ -139,7 +142,18 @@ export function App() {
             aria-current={tab === item.id ? 'page' : undefined}
             onClick={() => setTab(item.id)}
           >
-            <Icon name={tab === item.id && item.id === 'home' ? 'navHomeSolid' : item.icon} size={23} />
+            <Icon
+              name={
+                classic
+                  ? item.id === 'plan'
+                    ? 'plan'
+                    : item.icon
+                  : tab === item.id && item.id === 'home'
+                    ? 'navHomeSolid'
+                    : item.icon
+              }
+              size={classic ? 22 : 23}
+            />
             {t(item.label)}
           </button>
         ))}
