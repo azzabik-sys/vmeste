@@ -1788,6 +1788,10 @@ html[data-look='card'] .popup { background: #faf9f6; }
 
 .set-row > svg { color: #c4c0b8; flex: none; }
 
+.set-row[aria-current='true'] > svg { color: #18a85b; }
+
+.settings-screen .push-top + .set-rows { margin-top: 8px; }
+
 .set-pill {
   background: #e7f8ee;
   color: #14824a;

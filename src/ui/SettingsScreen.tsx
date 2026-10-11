@@ -8,7 +8,7 @@ import { LegalScreen } from './LegalScreen'
 import type { LegalId } from './legalCopy'
 import { Onboarding } from './Onboarding'
 
-type Page = 'main' | 'invite' | 'currency' | 'language' | 'account'
+type Page = 'main' | 'budgets' | 'invite' | 'currency' | 'language' | 'account'
 
 const PERSON_TINTS = [
   { bg: '#d9f5e6', fg: '#14824a' },
@@ -109,6 +109,7 @@ export function SettingsScreen() {
     setCopied(null)
     setCurrencyQuery('')
     setJoinOpen(false)
+    setConfirmDelete(false)
     window.scrollTo(0, 0)
   }
 
@@ -130,6 +131,77 @@ export function SettingsScreen() {
         <h1 className="push-title">{title}</h1>
         <span className="push-side" />
       </header>
+    )
+  }
+
+  if (page === 'budgets') {
+    return (
+      <section className="screen screen-plain settings-screen">
+        {subHead(t('budgets'))}
+        <div className="set-rows">
+          {snap.households.map((item) => {
+            const current = item.id === household.id
+            return (
+              <button
+                key={item.id}
+                className="set-row"
+                type="button"
+                aria-current={current ? 'true' : undefined}
+                onClick={() => {
+                  if (current) return
+                  setConfirmDelete(false)
+                  void switchHousehold(item.id)
+                }}
+              >
+                <span className="set-ico mint">
+                  <Icon name="wallet" size={18} />
+                </span>
+                <span className="set-row-copy">
+                  <strong>{item.name}</strong>
+                </span>
+                {current ? <Icon name="check" size={18} /> : null}
+              </button>
+            )
+          })}
+          {remote ? (
+            <button
+              className="set-row"
+              type="button"
+              onClick={() => {
+                originId.current = household.id
+                setCreating(true)
+              }}
+            >
+              <span className="set-ico mint">
+                <Icon name="layers" size={18} />
+              </span>
+              <span className="set-row-copy">
+                <strong>{t('newBudget')}</strong>
+              </span>
+              <Icon name="chevron" size={18} />
+            </button>
+          ) : null}
+        </div>
+        <div className="danger-card">
+          <button
+            className="set-row danger-row"
+            type="button"
+            onClick={() => {
+              if (!confirmDelete) {
+                setConfirmDelete(true)
+                return
+              }
+              void deleteBudget()
+            }}
+          >
+            <Icon name="trash" size={18} />
+            <span className="set-row-copy">
+              <strong>{confirmDelete ? t('deleteSure') : t('deleteBudget')}</strong>
+            </span>
+            <Icon name="chevron" size={18} />
+          </button>
+        </div>
+      </section>
     )
   }
 
@@ -343,29 +415,16 @@ export function SettingsScreen() {
 
       <label className="set-label">{t('budgets')}</label>
       <div className="set-rows">
-        {snap.households.map((item) => {
-          const current = item.id === household.id
-          return (
-            <button
-              key={item.id}
-              className="set-row"
-              type="button"
-              aria-pressed={current}
-              onClick={() => {
-                if (!current) void switchHousehold(item.id)
-              }}
-            >
-              <span className="set-ico mint">
-                <Icon name="wallet" size={18} />
-              </span>
-              <span className="set-row-copy">
-                <strong>{item.name}</strong>
-              </span>
-              {current ? <em className="set-pill">{t('activeBudget')}</em> : null}
-              <Icon name="chevron" size={18} />
-            </button>
-          )
-        })}
+        <button className="set-row" type="button" onClick={() => go('budgets')}>
+          <span className="set-ico mint">
+            <Icon name="wallet" size={18} />
+          </span>
+          <span className="set-row-copy">
+            <strong>{household.name}</strong>
+          </span>
+          <em className="set-pill">{t('activeBudget')}</em>
+          <Icon name="chevron" size={18} />
+        </button>
         <button className="set-row" type="button" onClick={() => go('invite')}>
           <span className="set-ico blue">
             <Icon name="users" size={18} />
@@ -383,24 +442,6 @@ export function SettingsScreen() {
             </span>
             <span className="set-row-copy">
               <strong>{t('inviteOrJoin')}</strong>
-            </span>
-            <Icon name="chevron" size={18} />
-          </button>
-        ) : null}
-        {remote ? (
-          <button
-            className="set-row"
-            type="button"
-            onClick={() => {
-              originId.current = household.id
-              setCreating(true)
-            }}
-          >
-            <span className="set-ico mint">
-              <Icon name="layers" size={18} />
-            </span>
-            <span className="set-row-copy">
-              <strong>{t('newBudget')}</strong>
             </span>
             <Icon name="chevron" size={18} />
           </button>
@@ -471,48 +512,31 @@ export function SettingsScreen() {
         </button>
       </div>
 
-      <label className="set-label">{t('dangerZone')}</label>
       {remote ? (
-        <div className="danger-card">
-          <button
-            className="set-row danger-row"
-            type="button"
-            onClick={() => {
-              if (!confirmAccount) {
-                setConfirmAccount(true)
-                return
-              }
-              void deleteAccount()
-            }}
-          >
-            <Icon name="trash" size={18} />
-            <span className="set-row-copy">
-              <strong>{confirmAccount ? t('deleteAccountSure') : t('deleteAccount')}</strong>
-            </span>
-            <Icon name="chevron" size={18} />
-          </button>
-          <p className="danger-note">{t('deleteAccountNote')}</p>
-        </div>
+        <>
+          <label className="set-label">{t('dangerZone')}</label>
+          <div className="danger-card">
+            <button
+              className="set-row danger-row"
+              type="button"
+              onClick={() => {
+                if (!confirmAccount) {
+                  setConfirmAccount(true)
+                  return
+                }
+                void deleteAccount()
+              }}
+            >
+              <Icon name="trash" size={18} />
+              <span className="set-row-copy">
+                <strong>{confirmAccount ? t('deleteAccountSure') : t('deleteAccount')}</strong>
+              </span>
+              <Icon name="chevron" size={18} />
+            </button>
+            <p className="danger-note">{t('deleteAccountNote')}</p>
+          </div>
+        </>
       ) : null}
-      <div className="danger-card">
-        <button
-          className="set-row danger-row"
-          type="button"
-          onClick={() => {
-            if (!confirmDelete) {
-              setConfirmDelete(true)
-              return
-            }
-            void deleteBudget()
-          }}
-        >
-          <Icon name="trash" size={18} />
-          <span className="set-row-copy">
-            <strong>{confirmDelete ? t('deleteSure') : t('deleteBudget')}</strong>
-          </span>
-          <Icon name="chevron" size={18} />
-        </button>
-      </div>
     </section>
   )
 }
