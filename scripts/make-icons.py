@@ -108,7 +108,7 @@ def main() -> None:
     if expo.is_dir():
         save(place(mark, 1024, 0.72, WHITE), expo / "icon.png", rgb=True)
         save(place(mark, 48, 0.72, WHITE), expo / "favicon.png")
-        save(place(mark, 1024, 0.42, CREAM), expo / "splash-icon.png", rgb=True)
+        save(place(mark, 1024, 0.42, WHITE), expo / "splash-icon.png", rgb=True)
         save(place(mark, 512, 0.58, (0, 0, 0, 0)), expo / "android-icon-foreground.png")
         save(Image.new("RGBA", (512, 512), WHITE), expo / "android-icon-background.png")
         save(monochrome(mark, 432), expo / "android-icon-monochrome.png")

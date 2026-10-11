@@ -115,7 +115,7 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
   const font = '-apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif'
   return (
     <svg className="gauge" width="136" height="94" viewBox="0 0 160 110" role="img" aria-label={`${percent}%`}>
-      <path d={arc} fill="none" stroke="#E7E9EE" strokeWidth={stroke} strokeLinecap="round" />
+      <path d={arc} fill="none" stroke="#E8EAED" strokeWidth={stroke} strokeLinecap="round" />
       {clamped > 0 ? (
         <path
           d={arc}
@@ -143,7 +143,7 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
         y={cy - 2}
         textAnchor="middle"
         dominantBaseline="central"
-        fill="#8b909a"
+        fill="#858B95"
         fontSize="12"
         fontWeight="500"
         fontFamily={font}
