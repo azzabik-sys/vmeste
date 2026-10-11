@@ -22,7 +22,7 @@ function render() {
   document.documentElement.lang = meta.locale
   document.documentElement.dir = meta.dir
   const t = (key: TextKey) => TEXT[lang][key]
-  document.title = `${t(page)} — Vmeste`
+  document.title = `${t(page)} — Spendy`
 
   const back = document.querySelector<HTMLButtonElement>('#back')
   const backLabel = document.querySelector('#back-label')

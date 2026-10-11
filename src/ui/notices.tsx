@@ -122,7 +122,7 @@ export function Notices() {
         .filter(Boolean)
         .join('\n')
       try {
-        new Notification('Вместе', { body })
+        new Notification('Spendy', { body })
       } catch {
         // Системное уведомление в этом окне недоступно. Окно в приложении уже показано.
       }

@@ -175,8 +175,8 @@ export const en = {
   privacy: 'Privacy',
   support: 'Support',
   appDescription: 'A simple shared budget for two',
-  privacyUpdated: 'Vmeste · 11 October 2026',
-  privacyIntro: 'Vmeste is a shared monthly budget for two people. This page does not ask you to sign in.',
+  privacyUpdated: 'Spendy · 11 October 2026',
+  privacyIntro: 'Spendy is a shared monthly budget for two people. This page does not ask you to sign in.',
   privacyDataTitle: 'Data in the budget',
   privacyDataEmail: 'The email from Apple, Google, or the one you type. A password, if you set one, is stored by Supabase as a hash. The app does not read it.',
   privacyDataName: 'The name you enter.',
@@ -190,9 +190,9 @@ export const en = {
   privacyDelete:
     'In the app, open Settings and tap Delete account. The sign-in and email are deleted. If someone else is in the budget, the shared budget and expenses already entered stay with them, including the name that was shown in history. If you are the only member, the budget is deleted with the account.',
   privacyKidsTitle: 'Children',
-  privacyKids: 'Vmeste is not directed at children under 13.',
+  privacyKids: 'Spendy is not directed at children under 13.',
   privacyContactTitle: 'Contact',
-  supportLead: 'Vmeste · this page does not ask you to sign in',
+  supportLead: 'Spendy · this page does not ask you to sign in',
   supportForgotTitle: 'Forgot password',
   supportForgot:
     'On the sign-in screen, tap Forgot password. An email arrives with a link. Do not open it. Copy the link, paste it in the app, and choose a new password.',

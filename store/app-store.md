@@ -1,10 +1,10 @@
-# Вместе — тексты для App Store Connect
+# Spendy — тексты для App Store Connect
 
 Вставлять в карточку приложения. Пароль демо-аккаунта лежит отдельно в `store/reviewer.txt` на этом компьютере и в ответном сообщении. В git его нет.
 
 ## Карточка
 
-- Name: Вместе
+- Name: Spendy
 - Subtitle: Общий бюджет для двоих
 - Primary language: Russian
 - Category: Finance
@@ -21,7 +21,7 @@
 
 ## Описание
 
-Вместе — бюджет на месяц для двоих. Один общий план, категории и траты. Второй человек входит по коду и видит те же цифры.
+Spendy — бюджет на месяц для двоих. Один общий план, категории и траты. Второй человек входит по коду и видит те же цифры.
 
 Что есть в приложении:
 • категории с лимитами и общая сумма на месяц
@@ -46,7 +46,7 @@ Subtitle: Shared budget for two
 
 Description:
 
-Vmeste is a monthly budget for two people. One shared plan, categories, and expenses. The other person joins with a code and sees the same numbers.
+Spendy is a monthly budget for two people. One shared plan, categories, and expenses. The other person joins with a code and sees the same numbers.
 
 What you can do:
 • category limits and one monthly total

@@ -177,8 +177,8 @@ export const vi: Catalog = {
   privacy: 'Quyền riêng tư',
   support: 'Hỗ trợ',
   appDescription: 'Ngân sách chung đơn giản cho hai người',
-  privacyUpdated: 'Vmeste · 11 tháng 10 năm 2026',
-  privacyIntro: 'Vmeste là ngân sách tháng dùng chung cho hai người. Trang này không yêu cầu đăng nhập.',
+  privacyUpdated: 'Spendy · 11 tháng 10 năm 2026',
+  privacyIntro: 'Spendy là ngân sách tháng dùng chung cho hai người. Trang này không yêu cầu đăng nhập.',
   privacyDataTitle: 'Dữ liệu trong ngân sách',
   privacyDataEmail: 'Email từ Apple, Google hoặc email bạn nhập. Mật khẩu, nếu có, được Supabase lưu dạng hash. Ứng dụng không đọc mật khẩu.',
   privacyDataName: 'Tên bạn đã nhập.',
@@ -194,9 +194,9 @@ export const vi: Catalog = {
   privacyDelete:
     'Trong ứng dụng, mở Cài đặt và nhấn Xóa tài khoản. Đăng nhập và email bị xóa. Nếu còn người khác trong ngân sách, ngân sách chung và các khoản đã nhập vẫn ở lại với người đó, kể cả tên đã hiện trong lịch sử. Nếu chỉ có bạn, ngân sách bị xóa cùng tài khoản.',
   privacyKidsTitle: 'Trẻ em',
-  privacyKids: 'Vmeste không hướng tới trẻ em dưới 13 tuổi.',
+  privacyKids: 'Spendy không hướng tới trẻ em dưới 13 tuổi.',
   privacyContactTitle: 'Liên hệ',
-  supportLead: 'Vmeste · trang này không yêu cầu đăng nhập',
+  supportLead: 'Spendy · trang này không yêu cầu đăng nhập',
   supportForgotTitle: 'Quên mật khẩu',
   supportForgot:
     'Ở màn hình đăng nhập, nhấn Quên mật khẩu. Email sẽ có một liên kết. Đừng mở liên kết. Hãy sao chép, dán vào ứng dụng và đặt mật khẩu mới.',
