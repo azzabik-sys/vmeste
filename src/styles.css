@@ -372,14 +372,19 @@ h1, h2, p { margin: 0; }
   width: auto;
   height: 32px;
   background: transparent;
-  padding: 0;
+  /* Extra left padding centers the code; the chevron sits on the right. */
+  padding: 0 8px 0 16px;
   flex: none;
+  gap: 2px;
 }
 
 .select-shell.tiny select {
   font-size: 15px;
   color: #858B95;
-  padding-right: 4px;
+  flex: none;
+  width: auto;
+  padding: 0;
+  text-align: right;
 }
 
 .onboard-actions {
