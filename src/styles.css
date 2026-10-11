@@ -692,12 +692,14 @@ h1, h2, p { margin: 0; }
 
 .spent-main {
   display: grid;
-  grid-template-columns: 136px 1px minmax(0, 1fr);
-  gap: 12px;
-  align-items: center;
+  grid-template-columns: auto 1px minmax(0, 1fr);
+  column-gap: 16px;
+  align-items: stretch;
 }
 
-.spent-rule { width: 1px; height: 78px; background: #E8EAED; }
+.spent-rule { width: 1px; height: auto; background: #E8EAED; }
+
+.spent-main > div { align-self: center; }
 
 .spent-kicker {
   display: flex;

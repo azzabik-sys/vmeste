@@ -104,17 +104,30 @@ export function Ring({ percent, tone }: { percent: number; tone: PaceLevel }) {
 }
 
 export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceLevel; caption: string }) {
-  const radius = 56
-  const cx = 80
-  const cy = 88
-  const stroke = 14
+  const radius = 54
+  const stroke = 12
+  const pad = 1
+  const cx = pad + stroke / 2 + radius
+  const cy = cx
+  const width = cx + radius + stroke / 2 + pad
+  const height = cy + stroke / 2 + pad
   const length = Math.PI * radius
   const clamped = Math.max(0, Math.min(percent, 100))
   const color = tone === 'over' ? '#EF4444' : tone === 'warn' ? '#F59E0B' : '#1FA86A'
   const arc = `M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`
   const font = '-apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif'
+  const percentSize = 21
+  const captionSize = 10
+  const inner = radius - stroke / 2
+  // Ink boxes run outside the em square: 21px paints 24px tall, 10px paints 12px.
+  const percentHalf = 12
+  const captionHalf = 6
+  const between = percentHalf + 4 + captionHalf
+  const bowlMid = cy - inner / 2
+  const percentY = bowlMid - (between + captionHalf - percentHalf) / 2
+  const captionY = percentY + between
   return (
-    <svg className="gauge" width="136" height="94" viewBox="0 0 160 110" role="img" aria-label={`${percent}%`}>
+    <svg className="gauge" width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${percent}%`}>
       <path d={arc} fill="none" stroke="#E8EAED" strokeWidth={stroke} strokeLinecap="round" />
       {clamped > 0 ? (
         <path
@@ -128,11 +141,11 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
       ) : null}
       <text
         x={cx}
-        y={cy - 20}
+        y={percentY}
         textAnchor="middle"
         dominantBaseline="central"
-        fill="#171714"
-        fontSize="22"
+        fill="#171717"
+        fontSize={percentSize}
         fontWeight="700"
         fontFamily={font}
       >
@@ -140,11 +153,11 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
       </text>
       <text
         x={cx}
-        y={cy - 2}
+        y={captionY}
         textAnchor="middle"
         dominantBaseline="central"
         fill="#858B95"
-        fontSize="12"
+        fontSize={captionSize}
         fontWeight="500"
         fontFamily={font}
       >
