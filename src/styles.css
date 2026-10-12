@@ -508,6 +508,9 @@ h1, h2, p { margin: 0; }
   flex: none;
 }
 
+.mark svg,
+.spent-ico svg { stroke-width: 2.05; }
+
 .mark-btn, .trash, .grip {
   border: 0;
   background: transparent;
@@ -551,6 +554,11 @@ h1, h2, p { margin: 0; }
   flex: none;
 }
 
+.limit-money:focus-within {
+  border-color: #2f7cf6;
+  box-shadow: 0 0 0 3px rgba(47, 124, 246, 0.28);
+}
+
 .limit-symbol {
   color: #858B95;
   font-size: 14px;
@@ -560,12 +568,21 @@ h1, h2, p { margin: 0; }
   width: 92px;
   height: 36px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 0;
   background: transparent;
   text-align: right;
   padding: 0 8px 0 2px;
   font-size: 16px;
   font-variant-numeric: tabular-nums;
+  outline: none;
+  outline-width: 0;
+  appearance: none;
+}
+
+.limit-amount:focus,
+.limit-amount:focus-visible {
+  outline: none;
+  outline-width: 0;
 }
 
 .manage-amount input { background: transparent; }
@@ -765,8 +782,8 @@ h1, h2, p { margin: 0; }
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: #f3f4f6;
-  color: #171717;
+  background: #eef1f4;
+  color: #3a4150;
   display: inline-flex;
   align-items: center;
   justify-content: center;

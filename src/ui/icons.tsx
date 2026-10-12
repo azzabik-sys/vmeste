@@ -231,15 +231,15 @@ export function Icon({ name, size = 22 }: { name: string; size?: number }) {
 }
 
 const LOOK: Record<string, { bg: string; fg: string }> = {
-  food: { bg: '#E7F6EE', fg: '#18A85B' },
-  car: { bg: '#E7F0FC', fg: '#3B82F6' },
-  home: { bg: '#FDECEC', fg: '#EF4444' },
-  bill: { bg: '#E8F6F4', fg: '#0F9F8A' },
-  shop: { bg: '#F4E9FB', fg: '#A855F7' },
-  game: { bg: '#FFF3E4', fg: '#F59E0B' },
-  card: { bg: '#FFF3E4', fg: '#F59E0B' },
-  heart: { bg: '#FDE8EF', fg: '#EC4899' },
-  coffee: { bg: '#F8F1E6', fg: '#C2762A' },
+  food: { bg: '#D7F8E6', fg: '#12B85A' },
+  car: { bg: '#DBEAFE', fg: '#2F7CF6' },
+  home: { bg: '#FFE4E6', fg: '#EF4444' },
+  bill: { bg: '#D5F5EF', fg: '#0C9A84' },
+  shop: { bg: '#F3E8FF', fg: '#9333EA' },
+  game: { bg: '#FFEDD8', fg: '#F59E0B' },
+  card: { bg: '#FFEDD8', fg: '#F59E0B' },
+  heart: { bg: '#FFE0EA', fg: '#EC4899' },
+  coffee: { bg: '#F8EAD6', fg: '#C26A1A' },
 }
 
 export function categoryLook(icon: string) {
