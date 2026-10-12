@@ -118,13 +118,10 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
   const font = '-apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif'
   const percentSize = 21
   const captionSize = 10
-  // Ink boxes run outside the em square: 21px paints 24px tall, 10px paints 12px.
-  const percentHalf = 12
-  const captionHalf = 6
-  const between = percentHalf + 4 + captionHalf
-  // "Spent" sits on the line where the arc starts, the two endpoints.
-  const captionY = cy
-  const percentY = captionY - between
+  // The percent sits 6px lower than the previous bowl placement.
+  // Spent stays 4px closer to that number than before, still centered on the arc.
+  const percentY = cy - 16
+  const captionY = cy + 2
   return (
     <svg className="gauge" width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`${percent}%`}>
       <path d={arc} fill="none" stroke="#E8EAED" strokeWidth={stroke} strokeLinecap="round" />
