@@ -235,6 +235,13 @@ export const en = {
   errCreateCode: 'Could not create a code. Try again',
   errMoveFailed: 'Could not move the budget',
   errPhoneBudget: 'This phone already has a budget.',
+  budgetSwitchHint: 'Current budget · Tap to switch',
+  membersHint: 'Manage people in this budget',
+  createNewBudget: 'Create new budget',
+  createNewBudgetHint: 'Start a new budget for a different purpose',
+  joinABudget: 'Join a budget',
+  joinABudgetHint: 'Enter an invite link or code',
+  paceAlertsHint: 'Get notified when you\'re close to your limit',
 } as const
 
 export type TextKey = keyof typeof en

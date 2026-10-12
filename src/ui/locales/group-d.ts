@@ -233,6 +233,13 @@ export const ja: Catalog = {
   errCreateCode: 'コードを作成できませんでした。もう一度試してください',
   errMoveFailed: '予算を移動できませんでした',
   errPhoneBudget: 'このスマホにはすでに予算があります。',
+  budgetSwitchHint: '現在の予算 · タップして切り替え',
+  membersHint: 'この予算のメンバーを管理',
+  createNewBudget: '新しい予算を作成',
+  createNewBudgetHint: '別の目的で新しい予算を始める',
+  joinABudget: '予算に参加',
+  joinABudgetHint: '招待リンクまたはコードを入力',
+  paceAlertsHint: '上限に近づくと通知します',
 }
 
 export const ko: Catalog = {
@@ -468,6 +475,13 @@ export const ko: Catalog = {
   errCreateCode: '코드를 만들지 못했습니다. 다시 시도하세요',
   errMoveFailed: '예산을 옮기지 못했습니다',
   errPhoneBudget: '이 휴대폰에는 이미 예산이 있습니다.',
+  budgetSwitchHint: '현재 예산 · 탭하여 전환',
+  membersHint: '이 예산의 사람을 관리',
+  createNewBudget: '새 예산 만들기',
+  createNewBudgetHint: '다른 목적으로 새 예산을 시작',
+  joinABudget: '예산에 참여',
+  joinABudgetHint: '초대 링크 또는 코드를 입력',
+  paceAlertsHint: '한도에 가까워지면 알림',
 }
 
 export const zhHans: Catalog = {
@@ -703,6 +717,13 @@ export const zhHans: Catalog = {
   errCreateCode: '无法创建代码。请再试一次',
   errMoveFailed: '无法移动预算',
   errPhoneBudget: '这部手机已经有预算。',
+  budgetSwitchHint: '当前预算 · 点按切换',
+  membersHint: '管理此预算中的成员',
+  createNewBudget: '新建预算',
+  createNewBudgetHint: '为其他用途开始一个新预算',
+  joinABudget: '加入预算',
+  joinABudgetHint: '输入邀请链接或邀请码',
+  paceAlertsHint: '接近上限时通知你',
 }
 
 export const zhHant: Catalog = {
@@ -938,6 +959,13 @@ export const zhHant: Catalog = {
   errCreateCode: '無法建立代碼。請再試一次',
   errMoveFailed: '無法移動預算',
   errPhoneBudget: '這支手機已經有預算。',
+  budgetSwitchHint: '目前預算 · 點一下即可切換',
+  membersHint: '管理此預算中的成員',
+  createNewBudget: '建立新預算',
+  createNewBudgetHint: '為其他用途開始一個新預算',
+  joinABudget: '加入預算',
+  joinABudgetHint: '輸入邀請連結或邀請碼',
+  paceAlertsHint: '接近上限時通知你',
 }
 
 export const th: Catalog = {
@@ -1173,6 +1201,13 @@ export const th: Catalog = {
   errCreateCode: 'สร้างรหัสไม่ได้ ลองอีกครั้ง',
   errMoveFailed: 'ย้ายงบไม่ได้',
   errPhoneBudget: 'โทรศัพท์เครื่องนี้มีงบอยู่แล้ว',
+  budgetSwitchHint: 'งบปัจจุบัน · แตะเพื่อสลับ',
+  membersHint: 'จัดการคนในงบนี้',
+  createNewBudget: 'สร้างงบใหม่',
+  createNewBudgetHint: 'เริ่มงบใหม่สำหรับจุดประสงค์อื่น',
+  joinABudget: 'เข้าร่วมงบ',
+  joinABudgetHint: 'ใส่ลิงก์หรือรหัสคำเชิญ',
+  paceAlertsHint: 'แจ้งเมื่อใกล้ถึงวงเงิน',
 }
 
 export const id: Catalog = {
@@ -1408,6 +1443,13 @@ export const id: Catalog = {
   errCreateCode: 'Tidak bisa membuat kode. Coba lagi',
   errMoveFailed: 'Tidak bisa memindahkan anggaran',
   errPhoneBudget: 'Ponsel ini sudah punya anggaran.',
+  budgetSwitchHint: 'Anggaran saat ini · Ketuk untuk ganti',
+  membersHint: 'Kelola orang dalam anggaran ini',
+  createNewBudget: 'Buat anggaran baru',
+  createNewBudgetHint: 'Anggaran baru untuk tujuan lain',
+  joinABudget: 'Gabung ke anggaran',
+  joinABudgetHint: 'Masukkan tautan atau kode undangan',
+  paceAlertsHint: 'Beri tahu saat mendekati batas',
 }
 
 export const ms: Catalog = {
@@ -1643,6 +1685,13 @@ export const ms: Catalog = {
   errCreateCode: 'Tidak dapat mencipta kod. Cuba lagi',
   errMoveFailed: 'Tidak dapat memindahkan belanjawan',
   errPhoneBudget: 'Telefon ini sudah mempunyai belanjawan.',
+  budgetSwitchHint: 'Belanjawan semasa · Ketik untuk tukar',
+  membersHint: 'Urus orang dalam belanjawan ini',
+  createNewBudget: 'Cipta belanjawan baharu',
+  createNewBudgetHint: 'Belanjawan baharu untuk tujuan lain',
+  joinABudget: 'Sertai belanjawan',
+  joinABudgetHint: 'Masukkan pautan atau kod jemputan',
+  paceAlertsHint: 'Maklum apabila hampir sampai had',
 }
 
 export const fil: Catalog = {
@@ -1878,6 +1927,13 @@ export const fil: Catalog = {
   errCreateCode: 'Hindi makagawa ng kodigo. Subukan muli',
   errMoveFailed: 'Hindi mailipat ang badyet',
   errPhoneBudget: 'May badyet na ang teleponong ito.',
+  budgetSwitchHint: 'Kasalukuyang badyet · I-tap para lumipat',
+  membersHint: 'Pamahalaan ang mga tao sa badyet na ito',
+  createNewBudget: 'Gumawa ng bagong badyet',
+  createNewBudgetHint: 'Bagong badyet para sa ibang layunin',
+  joinABudget: 'Sumali sa badyet',
+  joinABudgetHint: 'Ilagay ang link o code ng imbitasyon',
+  paceAlertsHint: 'Abiso kapag malapit ka na sa limit',
 }
 
 export const bn: Catalog = {
@@ -2113,4 +2169,11 @@ export const bn: Catalog = {
   errCreateCode: 'কোড তৈরি হয়নি। আবার চেষ্টা করুন',
   errMoveFailed: 'বাজেট সরানো যায়নি',
   errPhoneBudget: 'এই ফোনে আগেই একটি বাজেট আছে।',
+  budgetSwitchHint: 'বর্তমান বাজেট · বদলাতে ট্যাপ করুন',
+  membersHint: 'এই বাজেটের মানুষ পরিচালনা করুন',
+  createNewBudget: 'নতুন বাজেট তৈরি',
+  createNewBudgetHint: 'অন্য উদ্দেশ্যে একটি নতুন বাজেট',
+  joinABudget: 'বাজেটে যোগ দিন',
+  joinABudgetHint: 'আমন্ত্রণের লিংক বা কোড লিখুন',
+  paceAlertsHint: 'সীমার কাছে গেলে জানানো হবে',
 }

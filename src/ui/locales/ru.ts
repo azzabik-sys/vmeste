@@ -239,4 +239,11 @@ export const ru: Catalog = {
   errCreateCode: 'Не получилось создать код. Попробуйте ещё раз',
   errMoveFailed: 'Не получилось перенести бюджет',
   errPhoneBudget: 'Бюджет на этом телефоне уже есть.',
+  budgetSwitchHint: 'Текущий бюджет · Нажмите, чтобы сменить',
+  membersHint: 'Люди в этом бюджете',
+  createNewBudget: 'Создать новый бюджет',
+  createNewBudgetHint: 'Новый бюджет для другой цели',
+  joinABudget: 'Войти в бюджет',
+  joinABudgetHint: 'Введите ссылку или код приглашения',
+  paceAlertsHint: 'Предупредим, когда вы близко к лимиту',
 }

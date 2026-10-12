@@ -239,6 +239,13 @@ export const bg: Catalog = {
   errCreateCode: 'Кодът не можа да се създаде. Опитай отново',
   errMoveFailed: 'Бюджетът не можа да се премести',
   errPhoneBudget: 'Този телефон вече има бюджет.',
+  budgetSwitchHint: 'Текущ бюджет · Докоснете за смяна',
+  membersHint: 'Управлявайте хората в този бюджет',
+  createNewBudget: 'Създайте бюджет',
+  createNewBudgetHint: 'Нов бюджет за друга цел',
+  joinABudget: 'Присъединете се към бюджет',
+  joinABudgetHint: 'Въведете връзка или код за покана',
+  paceAlertsHint: 'Известие, когато сте близо до лимита',
 }
 
 export const hr: Catalog = {
@@ -480,6 +487,13 @@ export const hr: Catalog = {
   errCreateCode: 'Kod se nije mogao stvoriti. Pokušajte ponovno',
   errMoveFailed: 'Proračun se nije mogao premjestiti',
   errPhoneBudget: 'Ovaj telefon već ima proračun.',
+  budgetSwitchHint: 'Trenutačni proračun · Dodirnite za promjenu',
+  membersHint: 'Upravljajte ljudima u ovom proračunu',
+  createNewBudget: 'Stvori proračun',
+  createNewBudgetHint: 'Novi proračun za drugu svrhu',
+  joinABudget: 'Pridruži se proračunu',
+  joinABudgetHint: 'Unesite poveznicu ili kod pozivnice',
+  paceAlertsHint: 'Obavijest kad se približite limitu',
 }
 
 export const el: Catalog = {
@@ -721,6 +735,13 @@ export const el: Catalog = {
   errCreateCode: 'Δεν ήταν δυνατή η δημιουργία κωδικού. Δοκιμάστε ξανά',
   errMoveFailed: 'Δεν ήταν δυνατή η μετακίνηση του προϋπολογισμού',
   errPhoneBudget: 'Αυτό το τηλέφωνο έχει ήδη προϋπολογισμό.',
+  budgetSwitchHint: 'Τρέχων προϋπολογισμός · Πατήστε για αλλαγή',
+  membersHint: 'Διαχείριση ατόμων σε αυτόν τον προϋπολογισμό',
+  createNewBudget: 'Νέος προϋπολογισμός',
+  createNewBudgetHint: 'Νέος προϋπολογισμός για άλλο σκοπό',
+  joinABudget: 'Συμμετοχή σε προϋπολογισμό',
+  joinABudgetHint: 'Εισάγετε σύνδεσμο ή κωδικό πρόσκλησης',
+  paceAlertsHint: 'Ειδοποίηση όταν πλησιάζετε το όριο',
 }
 
 export const ca: Catalog = {
@@ -960,6 +981,13 @@ export const ca: Catalog = {
   errCreateCode: "No s'ha pogut crear un codi. Torna-ho a provar",
   errMoveFailed: "No s'ha pogut moure el pressupost",
   errPhoneBudget: 'Aquest telèfon ja té un pressupost.',
+  budgetSwitchHint: 'Pressupost actual · Toca per canviar',
+  membersHint: 'Gestiona les persones d’aquest pressupost',
+  createNewBudget: 'Crea un pressupost',
+  createNewBudgetHint: 'Un pressupost nou per a una altra finalitat',
+  joinABudget: 'Uneix-te a un pressupost',
+  joinABudgetHint: 'Introdueix un enllaç o un codi',
+  paceAlertsHint: 'Avís quan t’acostis al límit',
 }
 
 export const tr: Catalog = {
@@ -1201,6 +1229,13 @@ export const tr: Catalog = {
   errCreateCode: 'Kod oluşturulamadı. Yeniden dene',
   errMoveFailed: 'Bütçe taşınamadı',
   errPhoneBudget: 'Bu telefonda zaten bir bütçe var.',
+  budgetSwitchHint: 'Geçerli bütçe · Değiştirmek için dokun',
+  membersHint: 'Bu bütçedeki kişileri yönet',
+  createNewBudget: 'Yeni bütçe oluştur',
+  createNewBudgetHint: 'Başka bir amaç için yeni bütçe',
+  joinABudget: 'Bir bütçeye katıl',
+  joinABudgetHint: 'Davet bağlantısı veya kod gir',
+  paceAlertsHint: 'Limite yaklaşınca haber ver',
 }
 
 export const ar: Catalog = {
@@ -1442,6 +1477,13 @@ export const ar: Catalog = {
   errCreateCode: 'تعذّر إنشاء رمز. حاول مرة أخرى',
   errMoveFailed: 'تعذّر نقل الميزانية',
   errPhoneBudget: 'هذا الهاتف لديه ميزانية مسبقًا.',
+  budgetSwitchHint: 'الميزانية الحالية · اضغط للتبديل',
+  membersHint: 'إدارة الأشخاص في هذه الميزانية',
+  createNewBudget: 'إنشاء ميزانية جديدة',
+  createNewBudgetHint: 'ميزانية جديدة لغرض آخر',
+  joinABudget: 'الانضمام إلى ميزانية',
+  joinABudgetHint: 'أدخل رابط الدعوة أو الرمز',
+  paceAlertsHint: 'تنبيه عندما تقترب من الحد',
 }
 
 export const he: Catalog = {
@@ -1683,6 +1725,13 @@ export const he: Catalog = {
   errCreateCode: 'לא ניתן ליצור קוד. נסו שוב',
   errMoveFailed: 'לא ניתן להעביר את התקציב',
   errPhoneBudget: 'בטלפון הזה כבר יש תקציב.',
+  budgetSwitchHint: 'התקציב הנוכחי · הקישו כדי להחליף',
+  membersHint: 'ניהול האנשים בתקציב הזה',
+  createNewBudget: 'יצירת תקציב חדש',
+  createNewBudgetHint: 'תקציב חדש למטרה אחרת',
+  joinABudget: 'הצטרפות לתקציב',
+  joinABudgetHint: 'הזינו קישור או קוד הזמנה',
+  paceAlertsHint: 'התראה כשאתם קרובים למגבלה',
 }
 
 export const hi: Catalog = {
@@ -1924,4 +1973,11 @@ export const hi: Catalog = {
   errCreateCode: 'कोड नहीं बन सका। फिर कोशिश करें',
   errMoveFailed: 'बजट नहीं ले जाया जा सका',
   errPhoneBudget: 'इस फ़ोन पर पहले से बजट है।',
+  budgetSwitchHint: 'वर्तमान बजट · बदलने के लिए टैप करें',
+  membersHint: 'इस बजट के लोगों को प्रबंधित करें',
+  createNewBudget: 'नया बजट बनाएँ',
+  createNewBudgetHint: 'किसी और मकसद के लिए नया बजट',
+  joinABudget: 'बजट में जुड़ें',
+  joinABudgetHint: 'आमंत्रण लिंक या कोड दर्ज करें',
+  paceAlertsHint: 'सीमा के पास पहुँचने पर सूचना',
 }

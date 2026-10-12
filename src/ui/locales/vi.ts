@@ -239,4 +239,11 @@ export const vi: Catalog = {
   errCreateCode: 'Không tạo được mã. Hãy thử lại',
   errMoveFailed: 'Không chuyển được ngân sách',
   errPhoneBudget: 'Điện thoại này đã có ngân sách.',
+  budgetSwitchHint: 'Ngân sách hiện tại · Chạm để đổi',
+  membersHint: 'Quản lý người trong ngân sách này',
+  createNewBudget: 'Tạo ngân sách mới',
+  createNewBudgetHint: 'Ngân sách mới cho mục đích khác',
+  joinABudget: 'Tham gia ngân sách',
+  joinABudgetHint: 'Nhập liên kết hoặc mã mời',
+  paceAlertsHint: 'Báo khi bạn sắp chạm hạn mức',
 }

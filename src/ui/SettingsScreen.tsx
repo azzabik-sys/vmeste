@@ -8,7 +8,7 @@ import { LegalScreen } from './LegalScreen'
 import type { LegalId } from './legalCopy'
 import { Onboarding } from './Onboarding'
 
-type Page = 'main' | 'budgets' | 'invite' | 'currency' | 'language' | 'account'
+type Page = 'main' | 'budgets' | 'invite' | 'join' | 'currency' | 'language' | 'account'
 
 const PERSON_TINTS = [
   { bg: '#d9f5e6', fg: '#14824a' },
@@ -75,7 +75,6 @@ export function SettingsScreen() {
   const [legal, setLegal] = useState<LegalId | null>(null)
   const [creating, setCreating] = useState(false)
   const [joinCode, setJoinCode] = useState('')
-  const [joinOpen, setJoinOpen] = useState(false)
   const [joining, setJoining] = useState(false)
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
@@ -108,7 +107,6 @@ export function SettingsScreen() {
     setPage(next)
     setCopied(null)
     setCurrencyQuery('')
-    setJoinOpen(false)
     setConfirmDelete(false)
     window.scrollTo(0, 0)
   }
@@ -295,7 +293,7 @@ export function SettingsScreen() {
   if (page === 'invite') {
     return (
       <section className="screen screen-plain settings-screen">
-        {subHead(t('inviteOrJoin'))}
+        {subHead(t('members'))}
         <div className="invite-hero">
           <ShareMark />
           <h2>{t('shareBudget')}</h2>
@@ -362,37 +360,36 @@ export function SettingsScreen() {
             })}
           </ul>
         </div>
-        {remote ? (
-          <>
-            <button className="btn-primary" type="button" onClick={() => setJoinOpen((open) => !open)}>
-              <Icon name="plus" size={18} /> {t('joinAnother')}
-            </button>
-            <p className="join-note">{t('joinAnotherSub')}</p>
-            {joinOpen ? (
-              <form
-                className="join-form"
-                onSubmit={(event) => {
-                  event.preventDefault()
-                  const code = readJoinCode(joinCode)
-                  if (code.length < 4 || joining) return
-                  setJoining(true)
-                  void joinHousehold(code, me?.displayName || t('me')).finally(() => setJoining(false))
-                }}
-              >
-                <input
-                  aria-label={t('code')}
-                  autoCapitalize="characters"
-                  value={joinCode}
-                  placeholder={t('code')}
-                  onChange={(event) => setJoinCode(event.target.value)}
-                />
-                <button className="btn-primary" type="submit" disabled={joining || readJoinCode(joinCode).length < 4}>
-                  {t('joinBudget')}
-                </button>
-              </form>
-            ) : null}
-          </>
-        ) : null}
+      </section>
+    )
+  }
+
+  if (page === 'join') {
+    return (
+      <section className="screen screen-plain settings-screen">
+        {subHead(t('joinABudget'))}
+        <p className="join-lead">{t('joinABudgetHint')}</p>
+        <form
+          className="join-form"
+          onSubmit={(event) => {
+            event.preventDefault()
+            const code = readJoinCode(joinCode)
+            if (code.length < 4 || joining) return
+            setJoining(true)
+            void joinHousehold(code, me?.displayName || t('me')).finally(() => setJoining(false))
+          }}
+        >
+          <input
+            aria-label={t('code')}
+            autoCapitalize="characters"
+            value={joinCode}
+            placeholder={t('joinABudgetHint')}
+            onChange={(event) => setJoinCode(event.target.value)}
+          />
+          <button className="btn-primary" type="submit" disabled={joining || readJoinCode(joinCode).length < 4}>
+            {t('joinBudget')}
+          </button>
+        </form>
       </section>
     )
   }
@@ -417,31 +414,53 @@ export function SettingsScreen() {
       <div className="set-rows">
         <button className="set-row" type="button" onClick={() => go('budgets')}>
           <span className="set-ico mint">
-            <Icon name="wallet" size={18} />
+            <Icon name="wallet" size={20} />
           </span>
           <span className="set-row-copy">
             <strong>{household.name}</strong>
+            <em>{t('budgetSwitchHint')}</em>
           </span>
           <em className="set-pill">{t('activeBudget')}</em>
           <Icon name="chevron" size={18} />
         </button>
         <button className="set-row" type="button" onClick={() => go('invite')}>
           <span className="set-ico blue">
-            <Icon name="users" size={18} />
+            <Icon name="users" size={20} />
           </span>
           <span className="set-row-copy">
             <strong>{t('members')}</strong>
+            <em>{t('membersHint')}</em>
           </span>
           <span className="set-row-side">{peoplePhrase(snap.members.length, t)}</span>
           <Icon name="chevron" size={18} />
         </button>
-        {remote || household.inviteCode ? (
-          <button className="set-row" type="button" onClick={() => go('invite')}>
+        {remote ? (
+          <button
+            className="set-row"
+            type="button"
+            onClick={() => {
+              originId.current = household.id
+              setCreating(true)
+            }}
+          >
             <span className="set-ico mint">
-              <Icon name="plus" size={18} />
+              <Icon name="plus" size={20} />
             </span>
             <span className="set-row-copy">
-              <strong>{t('inviteOrJoin')}</strong>
+              <strong>{t('createNewBudget')}</strong>
+              <em>{t('createNewBudgetHint')}</em>
+            </span>
+            <Icon name="chevron" size={18} />
+          </button>
+        ) : null}
+        {remote ? (
+          <button className="set-row" type="button" onClick={() => go('join')}>
+            <span className="set-ico blue">
+              <Icon name="link" size={20} />
+            </span>
+            <span className="set-row-copy">
+              <strong>{t('joinABudget')}</strong>
+              <em>{t('joinABudgetHint')}</em>
             </span>
             <Icon name="chevron" size={18} />
           </button>
@@ -452,7 +471,7 @@ export function SettingsScreen() {
       <div className="set-rows">
         <button className="set-row" type="button" onClick={() => go('currency')}>
           <span className="set-ico gray">
-            <Icon name="coin" size={18} />
+            <Icon name="coin" size={20} />
           </span>
           <span className="set-row-copy">
             <strong>{t('currency')}</strong>
@@ -462,7 +481,7 @@ export function SettingsScreen() {
         </button>
         <button className="set-row" type="button" onClick={() => go('language')}>
           <span className="set-ico sky">
-            <Icon name="globe" size={18} />
+            <Icon name="globe" size={20} />
           </span>
           <span className="set-row-copy">
             <strong>{t('language')}</strong>
@@ -472,10 +491,11 @@ export function SettingsScreen() {
         </button>
         <div className="set-row">
           <span className="set-ico peach">
-            <Icon name="bell" size={18} />
+            <Icon name="bell" size={20} />
           </span>
           <span className="set-row-copy">
             <strong>{t('paceAlerts')}</strong>
+            <em>{t('paceAlertsHint')}</em>
           </span>
           <button
             className="switch"
@@ -494,7 +514,7 @@ export function SettingsScreen() {
       <div className="set-rows">
         <button className="set-row" type="button" onClick={() => setLegal('support')}>
           <span className="set-ico sky">
-            <Icon name="help" size={18} />
+            <Icon name="help" size={20} />
           </span>
           <span className="set-row-copy">
             <strong>{t('helpSupport')}</strong>
@@ -503,7 +523,7 @@ export function SettingsScreen() {
         </button>
         <button className="set-row" type="button" onClick={() => setLegal('privacy')}>
           <span className="set-ico lilac">
-            <Icon name="shield" size={18} />
+            <Icon name="shield" size={20} />
           </span>
           <span className="set-row-copy">
             <strong>{t('privacy')}</strong>

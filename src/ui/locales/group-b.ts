@@ -233,6 +233,13 @@ export const sv: Catalog = {
   errCreateCode: 'Kunde inte skapa en kod. Försök igen',
   errMoveFailed: 'Kunde inte flytta budgeten',
   errPhoneBudget: 'Den här telefonen har redan en budget.',
+  budgetSwitchHint: 'Aktuell budget · Tryck för att byta',
+  membersHint: 'Hantera personer i den här budgeten',
+  createNewBudget: 'Skapa ny budget',
+  createNewBudgetHint: 'En ny budget för ett annat syfte',
+  joinABudget: 'Gå med i en budget',
+  joinABudgetHint: 'Ange en inbjudningslänk eller kod',
+  paceAlertsHint: 'Avisering när du närmar dig gränsen',
 }
 
 export const da: Catalog = {
@@ -468,6 +475,13 @@ export const da: Catalog = {
   errCreateCode: 'Kunne ikke oprette en kode. Prøv igen',
   errMoveFailed: 'Kunne ikke flytte budgettet',
   errPhoneBudget: 'Denne telefon har allerede et budget.',
+  budgetSwitchHint: 'Nuværende budget · Tryk for at skifte',
+  membersHint: 'Administrer personer i dette budget',
+  createNewBudget: 'Opret nyt budget',
+  createNewBudgetHint: 'Et nyt budget til et andet formål',
+  joinABudget: 'Deltag i et budget',
+  joinABudgetHint: 'Indtast et invitationslink eller en kode',
+  paceAlertsHint: 'Besked når du er tæt på grænsen',
 }
 
 export const fi: Catalog = {
@@ -703,6 +717,13 @@ export const fi: Catalog = {
   errCreateCode: 'Koodia ei voitu luoda. Yritä uudelleen',
   errMoveFailed: 'Budjettia ei voitu siirtää',
   errPhoneBudget: 'Tällä puhelimella on jo budjetti.',
+  budgetSwitchHint: 'Nykyinen budjetti · Vaihda napauttamalla',
+  membersHint: 'Hallitse tämän budjetin ihmisiä',
+  createNewBudget: 'Luo uusi budjetti',
+  createNewBudgetHint: 'Uusi budjetti toiseen tarkoitukseen',
+  joinABudget: 'Liity budjettiin',
+  joinABudgetHint: 'Anna kutsulinkki tai koodi',
+  paceAlertsHint: 'Ilmoitus, kun olet lähellä rajaa',
 }
 
 export const nb: Catalog = {
@@ -938,6 +959,13 @@ export const nb: Catalog = {
   errCreateCode: 'Kunne ikke opprette en kode. Prøv igjen',
   errMoveFailed: 'Kunne ikke flytte budsjettet',
   errPhoneBudget: 'Denne telefonen har allerede et budsjett.',
+  budgetSwitchHint: 'Gjeldende budsjett · Trykk for å bytte',
+  membersHint: 'Administrer folk i dette budsjettet',
+  createNewBudget: 'Opprett nytt budsjett',
+  createNewBudgetHint: 'Et nytt budsjett til et annet formål',
+  joinABudget: 'Bli med i et budsjett',
+  joinABudgetHint: 'Skriv inn invitasjonslenke eller kode',
+  paceAlertsHint: 'Varsel når du nærmer deg grensen',
 }
 
 export const cs: Catalog = {
@@ -1173,6 +1201,13 @@ export const cs: Catalog = {
   errCreateCode: 'Kód se nepodařilo vytvořit. Zkuste to znovu',
   errMoveFailed: 'Rozpočet se nepodařilo přesunout',
   errPhoneBudget: 'Tento telefon už má rozpočet.',
+  budgetSwitchHint: 'Aktuální rozpočet · Klepnutím přepnete',
+  membersHint: 'Spravujte lidi v tomto rozpočtu',
+  createNewBudget: 'Vytvořit rozpočet',
+  createNewBudgetHint: 'Nový rozpočet pro jiný účel',
+  joinABudget: 'Připojit se k rozpočtu',
+  joinABudgetHint: 'Zadejte odkaz nebo kód pozvánky',
+  paceAlertsHint: 'Upozornění, když se blížíte limitu',
 }
 
 export const sk: Catalog = {
@@ -1408,6 +1443,13 @@ export const sk: Catalog = {
   errCreateCode: 'Kód sa nepodarilo vytvoriť. Skúste znova',
   errMoveFailed: 'Rozpočet sa nepodarilo presunúť',
   errPhoneBudget: 'Tento telefón už má rozpočet.',
+  budgetSwitchHint: 'Aktuálny rozpočet · Ťuknutím prepnete',
+  membersHint: 'Spravujte ľudí v tomto rozpočte',
+  createNewBudget: 'Vytvoriť rozpočet',
+  createNewBudgetHint: 'Nový rozpočet na iný účel',
+  joinABudget: 'Pripojiť sa k rozpočtu',
+  joinABudgetHint: 'Zadajte odkaz alebo kód pozvánky',
+  paceAlertsHint: 'Upozornenie, keď sa blížite k limitu',
 }
 
 export const ro: Catalog = {
@@ -1643,6 +1685,13 @@ export const ro: Catalog = {
   errCreateCode: 'Nu s-a putut crea un cod. Încearcă din nou',
   errMoveFailed: 'Bugetul nu a putut fi mutat',
   errPhoneBudget: 'Acest telefon are deja un buget.',
+  budgetSwitchHint: 'Bugetul curent · Atinge pentru a schimba',
+  membersHint: 'Gestionează persoanele din acest buget',
+  createNewBudget: 'Creează un buget',
+  createNewBudgetHint: 'Un buget nou pentru alt scop',
+  joinABudget: 'Intră într-un buget',
+  joinABudgetHint: 'Introdu un link sau un cod de invitație',
+  paceAlertsHint: 'Alertă când ești aproape de limită',
 }
 
 export const hu: Catalog = {
@@ -1878,4 +1927,11 @@ export const hu: Catalog = {
   errCreateCode: 'Nem sikerült kódot létrehozni. Próbáld újra',
   errMoveFailed: 'A költségvetést nem sikerült áthelyezni',
   errPhoneBudget: 'Ezen a telefonon már van költségvetés.',
+  budgetSwitchHint: 'Jelenlegi költségvetés · Koppints a váltáshoz',
+  membersHint: 'Emberek kezelése ebben a költségvetésben',
+  createNewBudget: 'Új költségvetés',
+  createNewBudgetHint: 'Új költségvetés más célra',
+  joinABudget: 'Csatlakozás egy költségvetéshez',
+  joinABudgetHint: 'Add meg a meghívó linket vagy kódot',
+  paceAlertsHint: 'Értesítés, ha közel jársz a limithez',
 }

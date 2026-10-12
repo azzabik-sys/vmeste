@@ -237,6 +237,13 @@ export const de: Catalog = {
   errCreateCode: 'Code konnte nicht erstellt werden. Versuche es erneut',
   errMoveFailed: 'Budget konnte nicht verschoben werden',
   errPhoneBudget: 'Auf diesem Handy gibt es schon ein Budget.',
+  budgetSwitchHint: 'Aktuelles Budget · Tippen zum Wechseln',
+  membersHint: 'Personen in diesem Budget verwalten',
+  createNewBudget: 'Neues Budget erstellen',
+  createNewBudgetHint: 'Ein neues Budget für einen anderen Zweck',
+  joinABudget: 'Einem Budget beitreten',
+  joinABudgetHint: 'Einladungslink oder Code eingeben',
+  paceAlertsHint: 'Hinweis, wenn das Limit nah ist',
 }
 
 export const fr: Catalog = {
@@ -476,6 +483,13 @@ export const fr: Catalog = {
   errCreateCode: 'Impossible de créer un code. Réessayez',
   errMoveFailed: 'Impossible de déplacer le budget',
   errPhoneBudget: 'Ce téléphone a déjà un budget.',
+  budgetSwitchHint: 'Budget actuel · Touchez pour changer',
+  membersHint: 'Gérer les personnes de ce budget',
+  createNewBudget: 'Créer un budget',
+  createNewBudgetHint: 'Un nouveau budget pour un autre usage',
+  joinABudget: 'Rejoindre un budget',
+  joinABudgetHint: 'Entrez un lien ou un code d’invitation',
+  paceAlertsHint: 'Alerte quand vous approchez de la limite',
 }
 
 export const es: Catalog = {
@@ -715,6 +729,13 @@ export const es: Catalog = {
   errCreateCode: 'No se ha podido crear un código. Vuelve a intentarlo',
   errMoveFailed: 'No se ha podido mover el presupuesto',
   errPhoneBudget: 'Este teléfono ya tiene un presupuesto.',
+  budgetSwitchHint: 'Presupuesto actual · Toca para cambiar',
+  membersHint: 'Gestionar a las personas de este presupuesto',
+  createNewBudget: 'Crear presupuesto',
+  createNewBudgetHint: 'Un presupuesto nuevo para otro fin',
+  joinABudget: 'Unirse a un presupuesto',
+  joinABudgetHint: 'Introduce un enlace o un código',
+  paceAlertsHint: 'Aviso cuando te acerques al límite',
 }
 
 export const it: Catalog = {
@@ -954,6 +975,13 @@ export const it: Catalog = {
   errCreateCode: 'Impossibile creare un codice. Riprova',
   errMoveFailed: 'Impossibile spostare il budget',
   errPhoneBudget: 'Questo telefono ha già un budget.',
+  budgetSwitchHint: 'Budget attuale · Tocca per cambiare',
+  membersHint: 'Gestisci le persone di questo budget',
+  createNewBudget: 'Crea un budget',
+  createNewBudgetHint: 'Un nuovo budget per un altro scopo',
+  joinABudget: 'Unisciti a un budget',
+  joinABudgetHint: 'Inserisci un link o un codice',
+  paceAlertsHint: 'Avviso quando sei vicino al limite',
 }
 
 export const pt: Catalog = {
@@ -1193,6 +1221,13 @@ export const pt: Catalog = {
   errCreateCode: 'Não foi possível criar um código. Tente de novo',
   errMoveFailed: 'Não foi possível mover o orçamento',
   errPhoneBudget: 'Este celular já tem um orçamento.',
+  budgetSwitchHint: 'Orçamento atual · Toque para trocar',
+  membersHint: 'Gerencie as pessoas deste orçamento',
+  createNewBudget: 'Criar orçamento',
+  createNewBudgetHint: 'Um orçamento novo para outro fim',
+  joinABudget: 'Entrar em um orçamento',
+  joinABudgetHint: 'Digite o link ou o código do convite',
+  paceAlertsHint: 'Aviso quando você estiver perto do limite',
 }
 
 export const nl: Catalog = {
@@ -1432,6 +1467,13 @@ export const nl: Catalog = {
   errCreateCode: 'Code maken lukte niet. Probeer opnieuw',
   errMoveFailed: 'Budget verplaatsen lukte niet',
   errPhoneBudget: 'Deze telefoon heeft al een budget.',
+  budgetSwitchHint: 'Huidig budget · Tik om te wisselen',
+  membersHint: 'Mensen in dit budget beheren',
+  createNewBudget: 'Nieuw budget maken',
+  createNewBudgetHint: 'Een nieuw budget voor een ander doel',
+  joinABudget: 'Deelnemen aan een budget',
+  joinABudgetHint: 'Voer een uitnodigingslink of code in',
+  paceAlertsHint: 'Melding als je bijna aan je limiet zit',
 }
 
 export const pl: Catalog = {
@@ -1671,6 +1713,13 @@ export const pl: Catalog = {
   errCreateCode: 'Nie udało się utworzyć kodu. Spróbuj ponownie',
   errMoveFailed: 'Nie udało się przenieść budżetu',
   errPhoneBudget: 'Ten telefon ma już budżet.',
+  budgetSwitchHint: 'Bieżący budżet · Dotknij, aby zmienić',
+  membersHint: 'Zarządzaj osobami w tym budżecie',
+  createNewBudget: 'Utwórz budżet',
+  createNewBudgetHint: 'Nowy budżet na inny cel',
+  joinABudget: 'Dołącz do budżetu',
+  joinABudgetHint: 'Wpisz link lub kod zaproszenia',
+  paceAlertsHint: 'Powiadomienie, gdy zbliżasz się do limitu',
 }
 
 export const uk: Catalog = {
@@ -1910,4 +1959,11 @@ export const uk: Catalog = {
   errCreateCode: 'Не вдалося створити код. Спробуйте ще',
   errMoveFailed: 'Не вдалося перенести бюджет',
   errPhoneBudget: 'На цьому телефоні вже є бюджет.',
+  budgetSwitchHint: 'Поточний бюджет · Натисніть, щоб змінити',
+  membersHint: 'Люди в цьому бюджеті',
+  createNewBudget: 'Створити новий бюджет',
+  createNewBudgetHint: 'Новий бюджет для іншої мети',
+  joinABudget: 'Приєднатися до бюджету',
+  joinABudgetHint: 'Введіть посилання або код запрошення',
+  paceAlertsHint: 'Попередимо, коли ви близько до ліміту',
 }
