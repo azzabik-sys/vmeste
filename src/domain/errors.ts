@@ -35,7 +35,7 @@ function match(message: string): TextKey | null {
   if (KNOWN[message]) return KNOWN[message]
   if (/invalid email/i.test(message)) return 'errNotEmail'
   if (/invalid login credentials/i.test(message)) return 'errBadLogin'
-  if (/provider is not enabled|unsupported provider/i.test(message)) return 'errProvider'
+  if (/provider is not enabled|unsupported provider|unacceptable audience|invalid_client/i.test(message)) return 'errProvider'
   if (/already registered|already exists/i.test(message)) return 'errExists'
   if (/password/i.test(message) && /at least|short|weak/i.test(message)) return 'errShortPassword'
   if (/email not confirmed/i.test(message)) return 'errUnconfirmed'

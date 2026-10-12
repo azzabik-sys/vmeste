@@ -51,6 +51,43 @@ function fail(error: { message: string } | null): void {
   if (error) throw new Error(error.message)
 }
 
+type NativeAppleResult = {
+  token?: string | null
+  nonce?: string | null
+  canceled?: boolean
+  message?: string
+}
+
+declare global {
+  interface Window {
+    ReactNativeWebView?: { postMessage: (message: string) => void }
+    spendyShell?: { apple?: boolean; auth?: boolean }
+    spendyNativeApple?: (detail: NativeAppleResult) => void
+    spendyNativeQueue?: NativeAppleResult[]
+  }
+}
+
+function providerRedirect(): string {
+  const redirectTo = new URL(import.meta.env.BASE_URL || '/', window.location.origin).href
+  if (!window.spendyShell?.auth) return redirectTo
+  const url = new URL(redirectTo)
+  url.searchParams.set('spendy_native', '1')
+  return url.href
+}
+
+function requestNativeApple(): Promise<NativeAppleResult> {
+  window.spendyNativeQueue?.splice(0)
+  return new Promise((resolve) => {
+    window.spendyNativeApple = (detail) => {
+      window.spendyNativeApple = (next) => {
+        ;(window.spendyNativeQueue ??= []).push(next)
+      }
+      resolve(detail)
+    }
+    window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'auth', provider: 'apple' }))
+  })
+}
+
 function asCurrency(value: string | null): CurrencyCode {
   const code = String(value || '')
   return isCurrency(code) ? code : 'RUB'
@@ -264,7 +301,19 @@ export function createSupabaseApi(url: string, anonKey: string): BudgetApi {
       fail(error)
     },
     async signInWithProvider(provider) {
-      const redirectTo = new URL(import.meta.env.BASE_URL || '/', window.location.origin).href
+      if (provider === 'apple' && window.spendyShell?.apple && window.ReactNativeWebView) {
+        const result = await requestNativeApple()
+        if (result.canceled) return
+        if (!result.token) throw new Error(result.message || 'Не получилось')
+        const { error } = await supabase.auth.signInWithIdToken({
+          provider: 'apple',
+          token: result.token,
+          nonce: result.nonce || undefined,
+        })
+        fail(error)
+        return
+      }
+      const redirectTo = providerRedirect()
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: { redirectTo, skipBrowserRedirect: true },

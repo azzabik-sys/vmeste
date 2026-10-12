@@ -62,5 +62,8 @@ describe('languages', () => {
     expect(humanError(new Error('Код не найден'))).toBe('Code not found')
     setActiveLang('ru')
     expect(humanError(new Error('invalid login credentials'))).toBe('Неверная почта или пароль.')
+    expect(humanError(new Error('Unacceptable audience in id_token'))).toBe(
+      'Этот вход ещё не подключён. Пока войдите почтой.',
+    )
   })
 })
