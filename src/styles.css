@@ -394,6 +394,21 @@ h1, h2, p { margin: 0; }
   background: linear-gradient(to top, #fff 72%, rgb(255 255 255 / 0));
 }
 
+.onboard[data-extra] {
+  min-height: 0;
+  padding-bottom: calc(168px + env(safe-area-inset-bottom));
+}
+
+.onboard[data-extra] .onboard-actions {
+  position: fixed;
+  z-index: 25;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(calc(100% - 32px), 408px);
+  bottom: calc(62px + env(safe-area-inset-bottom));
+  padding: 8px 0 0;
+}
+
 .onboard-actions .quiet-link,
 .onboard-body form .quiet-link {
   display: block;
@@ -1566,6 +1581,11 @@ html[data-look='card'] .screen {
 html[data-look='classic'] .onboard-actions,
 html[data-look='card'] .onboard-actions {
   background: linear-gradient(to top, #fff 72%, rgb(255 255 255 / 0));
+}
+
+html[data-look='classic'] .onboard[data-extra] .onboard-actions,
+html[data-look='card'] .onboard[data-extra] .onboard-actions {
+  background: #fff;
 }
 
 html[data-look='classic'] .avatars button,

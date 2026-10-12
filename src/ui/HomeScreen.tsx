@@ -9,8 +9,6 @@ import { categoryTitle, useI18n, type TextKey } from './i18n'
 import { CategoryMark, Icon } from './icons'
 import { Bar, Gauge, MonthPicker } from './widgets'
 
-const AVATAR_COLORS = ['#3B82F6', '#7C6BF2', '#18A85B', '#F59E0B']
-
 function daysLeftPhrase(
   count: number,
   t: (key: TextKey, vars?: Record<string, string | number>) => string,
@@ -48,7 +46,6 @@ export function HomeScreen({
   monthStart,
   today,
   onMonth,
-  onOpenPeople,
   onOpenSettings,
   onOpenCategory,
 }: {
@@ -56,7 +53,6 @@ export function HomeScreen({
   monthStart: string
   today: string
   onMonth: (monthStart: string) => void
-  onOpenPeople: () => void
   onOpenSettings: () => void
   onOpenCategory: (categoryId: string) => void
 }) {
@@ -79,19 +75,6 @@ export function HomeScreen({
       <header className="topbar">
         <MonthPicker value={monthStart} today={today} onChange={onMonth} />
         <div className="top-actions">
-          <div className="avatars">
-            {snap.members.slice(0, 3).map((member, index) => (
-              <button
-                key={member.userId}
-                type="button"
-                style={{ background: AVATAR_COLORS[index % AVATAR_COLORS.length] }}
-                aria-label={t('participants')}
-                onClick={onOpenPeople}
-              >
-                {(member.displayName.trim()[0] || '?').toUpperCase()}
-              </button>
-            ))}
-          </div>
           <button className="icon-btn" type="button" aria-label={t('settings')} onClick={onOpenSettings}>
             <Icon name="gear" size={22} />
           </button>

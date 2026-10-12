@@ -9,7 +9,6 @@ import { HistoryScreen } from './HistoryScreen'
 import { HomeScreen } from './HomeScreen'
 import { Icon } from './icons'
 import { Onboarding } from './Onboarding'
-import { PeopleSheet } from './PeopleSheet'
 import { PlanScreen } from './PlanScreen'
 import { Notices } from './notices'
 import { SettingsScreen } from './SettingsScreen'
@@ -29,7 +28,6 @@ export function App() {
   const [tab, setTab] = useState<Tab>('home')
   const [expenseOpen, setExpenseOpen] = useState(false)
   const [editing, setEditing] = useState<Expense | null>(null)
-  const [peopleOpen, setPeopleOpen] = useState(false)
   const [monthStart, setMonthStart] = useState(() => monthOf(todayISO()).start)
   const [categoryFocus, setCategoryFocus] = useState<string | null>(null)
   const [seenStatus, setSeenStatus] = useState(snap.status)
@@ -40,7 +38,6 @@ export function App() {
       if (tab !== 'home') setTab('home')
       if (expenseOpen) setExpenseOpen(false)
       if (editing) setEditing(null)
-      if (peopleOpen) setPeopleOpen(false)
       if (categoryFocus) setCategoryFocus(null)
     }
   }
@@ -97,7 +94,6 @@ export function App() {
           monthStart={monthStart}
           today={today}
           onMonth={setMonthStart}
-          onOpenPeople={() => setPeopleOpen(true)}
           onOpenSettings={() => setTab('settings')}
           onOpenCategory={setCategoryFocus}
         />
@@ -148,7 +144,6 @@ export function App() {
           }}
         />
       ) : null}
-      <PeopleSheet open={peopleOpen} onClose={() => setPeopleOpen(false)} />
     </div>
   )
 }

@@ -11,7 +11,7 @@
 - Secondary category: Lifestyle
 - Age rating: 4+
 - Price: Free
-- Bundle ID (заготовка, аккаунт Apple ещё не создан): app.vmeste.budget
+- Bundle ID: com.spendy.app
 - SKU: vmeste-ios
 - Copyright: 2026 azzabik
 - Privacy Policy URL: https://azzabik-sys.github.io/vmeste/privacy.html

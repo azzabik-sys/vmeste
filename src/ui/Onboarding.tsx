@@ -111,7 +111,7 @@ export function Onboarding({ extra = false, onCancel }: { extra?: boolean; onCan
   if (snap.status === 'needs_household' && wantJoin) {
     const canJoin = displayName.trim().length > 0 && (snap.mode !== 'remote' || code.trim().length >= 4)
     return (
-      <main className="shell onboard">
+      <main className="shell onboard" data-extra={extra ? '' : undefined}>
         <header className="wizard-top">
           <span className="push-side" />
           <span className="wizard-track" aria-hidden="true">
@@ -166,7 +166,7 @@ export function Onboarding({ extra = false, onCancel }: { extra?: boolean; onCan
   }
 
   return (
-    <main className="shell onboard">
+    <main className="shell onboard" data-extra={extra ? '' : undefined}>
       <header className="wizard-top">
         <button
           className="icon-btn"
