@@ -113,7 +113,7 @@ export function Gauge({ percent, tone, caption }: { percent: number; tone: PaceL
   const height = cy + stroke / 2 + pad
   const length = Math.PI * radius
   const clamped = Math.max(0, Math.min(percent, 100))
-  const color = tone === 'over' ? '#EF4444' : tone === 'warn' ? '#F59E0B' : '#1FA86A'
+  const color = tone === 'over' ? '#EF4444' : tone === 'warn' ? '#F59E0B' : '#18a85b'
   const arc = `M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`
   const font = '-apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif'
   const percentSize = 21
