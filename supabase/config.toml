@@ -1,0 +1,7 @@
+# Только проверка JWT у функций. Миграции отсюда не применяются.
+
+[functions.revenuecat-webhook]
+verify_jwt = false
+
+[functions.premium-sync]
+verify_jwt = true
