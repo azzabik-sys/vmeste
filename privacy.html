@@ -3,13 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Spendy</title>
+    <title>Privacy — Spendy</title>
     <style>
       body { margin: 0; background: #fff; color: #171717; font: 17px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
       header { position: sticky; top: 0; display: flex; align-items: center; gap: 12px; padding: calc(12px + env(safe-area-inset-top)) 16px 12px; background: #fff; }
       #back { display: flex; align-items: center; gap: 8px; border: 1px solid #E8EAED; background: #fff; border-radius: 14px; min-height: 44px; padding: 0 14px; font-size: 16px; font-weight: 600; }
       select { flex: 1; min-width: 0; height: 44px; border: 1px solid #E8EAED; border-radius: 14px; background: #fff; font-size: 16px; padding: 0 12px; }
       main { max-width: 40rem; margin: 0 auto; padding: 8px 20px 64px; }
+      h1 { font-size: 22px; font-weight: 700; margin: 8px 0 0; }
       h2 { font-size: 20px; margin: 28px 0 8px; }
       p, li { font-size: 17px; line-height: 1.45; }
       a { color: #171717; }
@@ -27,12 +28,29 @@
       </button>
       <select id="lang"></select>
     </header>
-    <main id="doc"></main>
-    <noscript>
-      <main>
-        <p><a href="./">←</a></p>
-        <p><a href="mailto:azzabik@yandex.ru">azzabik@yandex.ru</a></p>
-      </main>
-    </noscript>
+    <main id="doc">
+      <h1>Privacy</h1>
+      <p class="sub">Spendy · 11 October 2026</p>
+      <p>Spendy is a shared monthly budget for two people. This page does not ask you to sign in.</p>
+      <h2>Data in the budget</h2>
+      <ul>
+        <li>The email from Apple, Google, or the one you type. A password, if you set one, is stored by Supabase as a hash. The app does not read it.</li>
+        <li>The name you enter.</li>
+        <li>The budget name, currency, and monthly total.</li>
+        <li>Categories, limits, expense amounts, dates, notes, and who entered each expense.</li>
+      </ul>
+      <h2>Who can see it</h2>
+      <p>Only people in the same household can see the budget. You let the other person in with an invite code. We do not sell this data, show ads, or track you across other apps.</p>
+      <h2>Where it is stored</h2>
+      <p>Data is stored in Supabase, region ap-southeast-2 (Sydney, Australia). The phone keeps a sign-in session so you do not type the password every time.</p>
+      <p><a href="https://azzabik-sys.github.io/vmeste/">azzabik-sys.github.io/vmeste</a></p>
+      <h2>How to delete an account</h2>
+      <p>In the app, open Settings and tap Delete account. The sign-in and email are deleted. If someone else is in the budget, the shared budget and expenses already entered stay with them, including the name that was shown in history. If you are the only member, the budget is deleted with the account.</p>
+      <h2>Children</h2>
+      <p>Spendy is not directed at children under 13.</p>
+      <h2>Contact</h2>
+      <p><a href="mailto:azzabik@yandex.ru">azzabik@yandex.ru</a></p>
+      <p><a href="support.html">Support</a></p>
+    </main>
   </body>
 </html>
